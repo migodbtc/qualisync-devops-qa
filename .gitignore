@@ -1,0 +1,4 @@
+# To ignore in pushing commits
+# Keep it short and simple (KISS)
+
+.venv
