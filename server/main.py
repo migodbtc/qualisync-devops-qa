@@ -30,9 +30,9 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=360)
 
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+# CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
-app.route('/ping', methods=['GET', 'POST'])
+@app.route('/ping', methods=['GET', 'POST'])
 def index():
 
     return {"message": "pong!"}
