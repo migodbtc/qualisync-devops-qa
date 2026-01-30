@@ -15,6 +15,9 @@ export default function Page() {
 
     // ==> State variables
     const [users, setUsers] = useState<AuthUser[]>([]);
+    const [selectedUser, setSelectedUser] = useState<AuthUser>();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     // ==> Effect hooks
     useEffect(() => {
@@ -43,6 +46,22 @@ export default function Page() {
     const TableData: FC<PropsWithChildren> = ({children}) => {
         return <td className="px-4 py-2 text-sm text-slate-800">{children}</td>
     }
+
+    const TableModal: FC<PropsWithChildren<{ onClose: () => void }>> = ({ children, onClose }) => (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800">
+            <div className="bg-white rounded-lg shadow-lg p-6 min-w-2xl h-[80%] flex flex-col justify-between">
+                <div>
+                    {children}
+                </div>
+                <button
+                    className="mt-4 px-2 w-fit py-1 bg-slate-700 text-white rounded hover:bg-slate-800 cursor-pointer"
+                    onClick={onClose}
+                >
+                    Close
+                </button>
+            </div>
+        </div>
+    );
 
     return (
         <div className="flex flex-col min-h-screen w-full items-center justify-center bg-zinc-50 font-sans dark:bg-slate-200">
@@ -85,13 +104,25 @@ export default function Page() {
                                     <TableData>{user.password_hash}</TableData>
                                     <TableData>{user.created_at}</TableData>
                                     <TableData>{user.updated_at}</TableData>
-                                    <TableData>...</TableData>
+                                    <TableData><button
+                                        className="px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer"
+                                        onClick={() => {setSelectedUser(user); setIsModalOpen(true)}}
+                                        >
+                                        Open
+                                        </button>
+                                    </TableData>
                                 </TableRow>
                             })
                         }
                     </tbody>
                 </table>
             </main>
+            {isModalOpen && (
+            <TableModal onClose={() => setIsModalOpen(false)}>
+                <h2 className="text-lg font-bold mb-2">Auth User No. {selectedUser?.auth_id}</h2>
+                <p>This is a simple modal content.</p>
+            </TableModal>
+            )}
         </div>
     );
 }
