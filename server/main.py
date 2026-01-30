@@ -18,6 +18,9 @@ def random_email():
 def random_hash(length=32):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
+def to_json(obj):
+        return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
+
 
 # sqlalchemy
 class AuthUser(Base):
@@ -33,7 +36,32 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-new_user_1 = AuthUser(email_address="")
+# mock data
+def add_mock_user(email):
+    if not session.query(AuthUser).filter_by(email_address=email).first():
+        user = AuthUser(
+            email_address=email,
+            password_hash=random_hash(),
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+        session.add(user)
+
+add_mock_user("admin@edutechplatform.com")
+add_mock_user("teacher.jane@virtualclassroom.edu")
+add_mock_user("student.mike@onlinelearning.org")
+add_mock_user("support@lmshelpdesk.net")
+add_mock_user("principal@smartschool.edu")
+add_mock_user("instructor.lisa@elearninghub.com")
+add_mock_user("student.raj@campusconnect.org")
+add_mock_user("parent.maria@schoolportal.net")
+add_mock_user("it.support@edtechsolutions.com")
+add_mock_user("registrar@digitalacademy.edu")
+add_mock_user("counselor.john@virtualguidance.org")
+add_mock_user("librarian@onlinelibrary.edu")
+add_mock_user("admin@remoteschooling.net")
+add_mock_user("teacher.anna@blendedclassroom.com")
+session.commit()
 
 # flask app + configs
 app = Flask(__name__)
@@ -50,9 +78,36 @@ def index():
 @app.route('/auth_users', methods=['GET'])
 def get_auth_users():
     try:
-        pass
+        users = session.query(AuthUser).all()
+        users_json = []
+
+        for user in users:
+            users_json.append(to_json(user))
+
+        response = jsonify({
+            "message": "success",
+            "data": users_json,
+        })
+        return response, 200
     except Exception as e:
         print(f"Error occured on get_auth_users(): {str(e)}")
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/auth_users/<int:id>', methods=['GET'])
+def get_auth_user(id):
+    try:
+        user = to_json(session.query(AuthUser).filter_by(auth_id=id).first())
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        response = jsonify({
+            "message": "success",
+            "data": user,
+        })
+        return response, 200
+    except Exception as e:
+        print(f"Error occured on get_auth_user(): {str(e)}")
         return jsonify({"error": str(e)}), 400
 
 if __name__ == "__main__":
