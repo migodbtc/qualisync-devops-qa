@@ -15,9 +15,24 @@ export default function Page() {
 
     // ==> State variables
     const [users, setUsers] = useState<AuthUser[]>([]);
-    const [selectedUser, setSelectedUser] = useState<AuthUser>();
+    const [selectedUser, setSelectedUser] = useState<AuthUser | undefined>();
+    const [editedUser, setEditedUser] = useState<AuthUser | undefined>(undefined);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+
+    // ==> Component functions
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!editedUser) return;
+        const { name, value } = e.target;
+        setEditedUser({ ...editedUser, [name]: value });
+    };
+
+    const handleSave = () => {
+        // TBA: API logic. Frontend for now.
+        console.log("handleSave clicked!")
+    };
+
     
     // ==> Effect hooks
     useEffect(() => {
@@ -34,6 +49,13 @@ export default function Page() {
         })
     }, []);
 
+    useEffect(() => {
+        if (isModalOpen && selectedUser) {
+            setEditedUser({ ...selectedUser });
+            setIsEditing(false);
+        }
+    }, [isModalOpen, selectedUser]);
+
     // ==> Subcomponents
     const TableHeader: FC<PropsWithChildren> = ({children}) => {
         return <th className="px-4 py-2 text-left font-semibold text-slate-700">{children}</th>
@@ -49,16 +71,10 @@ export default function Page() {
 
     const TableModal: FC<PropsWithChildren<{ onClose: () => void }>> = ({ children, onClose }) => (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800">
-            <div className="bg-white rounded-lg shadow-lg p-6 min-w-2xl h-[80%] flex flex-col justify-between">
+            <div className="bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between">
                 <div>
                     {children}
                 </div>
-                <button
-                    className="mt-4 px-2 w-fit py-1 bg-slate-700 text-white rounded hover:bg-slate-800 cursor-pointer"
-                    onClick={onClose}
-                >
-                    Close
-                </button>
             </div>
         </div>
     );
@@ -89,8 +105,6 @@ export default function Page() {
                             <TableHeader>User ID</TableHeader>
                             <TableHeader>Email Address</TableHeader>
                             <TableHeader>Password Hash</TableHeader>
-                            <TableHeader>Created At</TableHeader>
-                            <TableHeader>Updated At</TableHeader>
                             <TableHeader>Options</TableHeader>
                         </tr>
                     </thead>
@@ -102,8 +116,6 @@ export default function Page() {
                                     <TableData>{user.auth_id}</TableData>
                                     <TableData>{user.email_address}</TableData>
                                     <TableData>{user.password_hash}</TableData>
-                                    <TableData>{user.created_at}</TableData>
-                                    <TableData>{user.updated_at}</TableData>
                                     <TableData><button
                                         className="px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer"
                                         onClick={() => {setSelectedUser(user); setIsModalOpen(true)}}
@@ -118,10 +130,91 @@ export default function Page() {
                 </table>
             </main>
             {isModalOpen && (
-            <TableModal onClose={() => setIsModalOpen(false)}>
-                <h2 className="text-lg font-bold mb-2">Auth User No. {selectedUser?.auth_id}</h2>
-                <p>This is a simple modal content.</p>
-            </TableModal>
+                <TableModal onClose={() => { setIsModalOpen(false); setIsEditing(false); }}>
+                    <h2 className="text-lg font-bold mb-2">Auth User No. {selectedUser?.auth_id}</h2>
+                    <form className="w-full">
+                        <div className="flex w-full mb-4">
+                            <div className="w-1/2 pr-2">
+                                <label className="block text-xs text-slate-500 mb-1">Email</label>
+                                <input type="email"
+                                    name="email_address"
+                                    className="w-full border border-slate-300 rounded px-2 py-1 text-xs"
+                                    value={editedUser?.email_address ?? ""}
+                                    disabled={!isEditing}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="w-1/2 pl-2">
+                                <label className="block text-xs text-slate-500 mb-1">Password</label>
+                                <input
+                                    type="text"
+                                    name="password_hash"
+                                    className="w-full border border-slate-300 rounded px-2 py-1 text-xs"
+                                    value={editedUser?.password_hash ?? ""}
+                                    disabled={!isEditing}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex w-full">
+                            <div className="w-1/2 pr-2">
+                                <label className="block text-xs text-slate-500 mb-1">Created At</label>
+                                <input
+                                    type="text"
+                                    name="created_at"
+                                    className="w-full border border-slate-300 rounded px-2 py-1 text-xs"
+                                    value={editedUser?.created_at ?? ""}
+                                    disabled
+                                />
+                            </div>
+                            <div className="w-1/2 pl-2">
+                                <label className="block text-xs text-slate-500 mb-1">Updated At</label>
+                                <input
+                                    type="text"
+                                    name="updated_at"
+                                    className="w-full border border-slate-300 rounded px-2 py-1 text-xs"
+                                    value={editedUser?.updated_at ?? ""}
+                                    disabled
+                                />
+                            </div>
+                        </div>
+                    </form>
+                    <div className="flex gap-2 w-full mt-4">
+                        
+                        {!isEditing ? (
+                            <button
+                                className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs cursor-pointer"
+                                onClick={() => setIsEditing(true)}
+                                type="button"
+                            >
+                                Edit
+                            </button>
+                        ) : (
+                            <button
+                                className="px-2 py-1 bg-gray-400 text-white rounded hover:bg-gray-500 text-xs cursor-pointer"
+                                onClick={() => { setIsEditing(false); setEditedUser(selectedUser); }}
+                                type="button"
+                            >
+                                Lock
+                            </button>
+                        )}
+                        <button
+                            className={`px-2 py-1 rounded text-xs cursor-pointer ${isEditing ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                            onClick={handleSave}
+                            type="button"
+                            disabled={!isEditing}
+                        >
+                            Save
+                        </button>
+                        <button
+                            className="px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer"
+                            onClick={() => { setIsModalOpen(false); setIsEditing(false); }}
+                            type="button"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </TableModal>
             )}
         </div>
     );
