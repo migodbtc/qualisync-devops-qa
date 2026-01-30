@@ -1,6 +1,6 @@
 import random
 import string
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from sqlalchemy import Column, DateTime, Integer, String, create_engine 
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -75,6 +75,9 @@ CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 def index():
     return {"message": "pong!"}
 
+## AUTH_USERS ROUTES
+
+# INDEX
 @app.route('/auth_users', methods=['GET'])
 def get_auth_users():
     try:
@@ -93,6 +96,41 @@ def get_auth_users():
         print(f"Error occured on get_auth_users(): {str(e)}")
         return jsonify({"error": str(e)}), 400
 
+# CREATE
+@app.route('/auth_users', methods=['POST'])
+def post_auth_user():
+    try:
+        
+        data = request.get_json()
+        
+        req_email = data['email_address']
+        req_pass = data['password_hash']
+
+        if session.query(AuthUser).filter_by(email_address=req_email).first():
+            return jsonify({"error": "Email address already exists within the database"}), 409
+
+        new_user = AuthUser(
+            email_address=req_email,
+            password_hash=random_hash(),
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+        session.add(new_user)
+        session.commit()
+        new_user = session.query(AuthUser.auth_id).filter_by(email_address=req_email).first()._asdict()
+
+        print(new_user)
+
+        response = jsonify({
+            "message": "User successfully registered within the database", 
+            "data": new_user
+        })
+        return response, 200 
+    except Exception as e:
+        print(f"Error occured on post_auth_user(): {str(e)}")
+        return jsonify({"error": str(e)}), 400
+
+# FETCH
 @app.route('/auth_users/<int:id>', methods=['GET'])
 def get_auth_user(id):
     try:
@@ -109,6 +147,7 @@ def get_auth_user(id):
     except Exception as e:
         print(f"Error occured on get_auth_user(): {str(e)}")
         return jsonify({"error": str(e)}), 400
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5821)
