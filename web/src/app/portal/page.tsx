@@ -13,25 +13,69 @@ interface AuthUser {
 
 const API_LINK = process.env.NEXT_PUBLIC_FLASK_API_URL;
 
+// ==> Subcomponents
+  const TableHeader: FC<PropsWithChildren> = ({ children }) => {
+    return (
+      <th className='px-4 py-2 text-left font-semibold text-slate-700'>
+        {children}
+      </th>
+    );
+  };
+
+  const TableRow: FC<PropsWithChildren> = ({ children }) => {
+    return <tr className='border-t border-slate-300'>{children}</tr>;
+  };
+
+  const TableData: FC<PropsWithChildren> = ({ children }) => {
+    return <td className='px-4 py-2 text-sm text-slate-800'>{children}</td>;
+  };
+
+  const TableModal: FC<PropsWithChildren> = ({
+    children,
+  }) => (
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
+      <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
+        <div>{children}</div>
+      </div>
+    </div>
+  );
+
+  const AddAuthUserModal: FC<PropsWithChildren> = ({
+    children
+  }) => (
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
+      <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
+        <div>{children}</div>
+      </div>
+    </div>
+  );
+
 export default function Page() {
-  // ==> State variables
+  // ==> General Variables
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<AuthUser | undefined>();
+
+  // ==> View/Edit User Modal
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editedUser, setEditedUser] = useState<Partial<AuthUser>>({
     email_address: "",
     password_hash: "",
   });
+
+  // ==> Add Auth User Modal 
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [newUser, setNewUser] = useState<Partial<AuthUser>>({
     email_address: "",
     password_hash: "",
   });
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const emailValid = /\S+@\S+\.\S+/.test(newUser.email_address ?? "");
+  const passwordValid = (newUser.password_hash ?? "").length >= 6;
+  const passwordsMatch = (newUser.password_hash ?? "") === confirmPassword;
+  const isAddFormValid = emailValid && passwordValid && passwordsMatch;
 
-  const [isAddFormValid, setIsAddFormValid] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
+  // ==> Miscelleaneous/Unsorted
   const [refreshToggle, setRefreshToggle] = useState<boolean>(false);
 
   // ==> Component functions
@@ -104,59 +148,6 @@ export default function Page() {
       });
   }, [refreshToggle]);
 
-  useEffect(() => {
-    const emailValid = /\S+@\S+\.\S+/.test(newUser.email_address ?? "");
-    const passwordValid = (newUser.password_hash ?? "").length >= 6;
-    const passwordsMatch = (newUser.password_hash ?? "") === confirmPassword;
-
-    setIsAddFormValid(emailValid && passwordValid && passwordsMatch);
-  }, [newUser, confirmPassword]);
-
-  useEffect(() => {
-    if (isModalOpen && selectedUser) {
-      setEditedUser({ ...selectedUser });
-      setIsEditing(false);
-    }
-  }, [isModalOpen, selectedUser]);
-
-  // ==> Subcomponents
-  const TableHeader: FC<PropsWithChildren> = ({ children }) => {
-    return (
-      <th className='px-4 py-2 text-left font-semibold text-slate-700'>
-        {children}
-      </th>
-    );
-  };
-
-  const TableRow: FC<PropsWithChildren> = ({ children }) => {
-    return <tr className='border-t border-slate-300'>{children}</tr>;
-  };
-
-  const TableData: FC<PropsWithChildren> = ({ children }) => {
-    return <td className='px-4 py-2 text-sm text-slate-800'>{children}</td>;
-  };
-
-  const TableModal: FC<PropsWithChildren<{ onClose: () => void }>> = ({
-    children,
-    onClose,
-  }) => (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
-      <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
-        <div>{children}</div>
-      </div>
-    </div>
-  );
-
-  const AddAuthUserModal: FC<PropsWithChildren<{ onClose: () => void }>> = ({
-    children,
-    onClose,
-  }) => (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
-      <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
-        <div>{children}</div>
-      </div>
-    </div>
-  );
 
   return (
     <div className='flex flex-col min-h-screen w-full items-center justify-center bg-zinc-50 font-sans dark:bg-slate-200'>
@@ -221,6 +212,8 @@ export default function Page() {
                       className='px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer'
                       onClick={() => {
                         setSelectedUser(user);
+                        setEditedUser({ ...user });
+                        setIsEditing(false);
                         setIsModalOpen(true);
                       }}
                     >
@@ -235,10 +228,6 @@ export default function Page() {
       </main>
       {isModalOpen && (
         <TableModal
-          onClose={() => {
-            setIsModalOpen(false);
-            setIsEditing(false);
-          }}
         >
           <h2 className='text-lg font-bold mb-2'>
             Auth User No. {selectedUser?.auth_id}
@@ -342,7 +331,7 @@ export default function Page() {
         </TableModal>
       )}
       {isAddModalOpen && (
-        <AddAuthUserModal onClose={() => setIsAddModalOpen(false)}>
+        <AddAuthUserModal >
           <h2 className='text-lg font-bold mb-2'>New Auth User</h2>
           <form
             className='w-full'
@@ -352,7 +341,6 @@ export default function Page() {
               setIsAddModalOpen(false);
               setNewUser({ email_address: "", password_hash: "" });
               setConfirmPassword("");
-              setIsAdding(false);
             }}
           >
             <div className='flex w-full mb-4'>

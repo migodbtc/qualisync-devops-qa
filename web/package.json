@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "pnpm exec eslint . && echo Linting has been finished, no problems has been identified!",
+    "lint:fix": "pnpm exec eslint . --fix && echo Linting and auto-fixing complete! No remaining problems identified.",
     "format": "prettier --write .",
     "check-format": "prettier --check ."
   },
