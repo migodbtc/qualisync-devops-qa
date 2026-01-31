@@ -29,11 +29,11 @@
 ## Phase 2: Standardization (Linting & Quality)
 *Goal: Decouple code quality tools from the IDE so they work on any machine (and robots).*
 
-- [ ] **Frontend Quality Tools**
-    - [ ] Install `prettier` and `eslint-config-prettier` as dev dependencies using `pnpm add -D ...`.
-    - [ ] Configure `.prettierrc`.
-    - [ ] Add scripts to `package.json`: `"format": "prettier --write ."` and `"check-format": "prettier --check ."`.
-    - [ ] **Test:** Run `pnpm run format` locally to verify it works.
+- [X] **Frontend Quality Tools**
+    - [X] Install `prettier` and `eslint-config-prettier` as dev dependencies using `pnpm add -D ...`.
+    - [X] Configure `.prettierrc`.
+    - [X] Add scripts to `package.json`: `"format": "prettier --write ."` and `"check-format": "prettier --check ."`.
+    - [X] **Test:** Run `pnpm run format` locally to verify it works.
 - [ ] **Backend Quality Tools**
     - [ ] Install `black` (formatting) and `flake8` (logic/errors) in the Python virtual environment.
     - [ ] Create `pyproject.toml` for Black configuration.
