@@ -11,6 +11,8 @@ interface AuthUser {
   updated_at: string;   
 }
 
+const API_LINK = process.env.NEXT_PUBLIC_FLASK_API_URL
+
 export default function Page() {
 
     // ==> State variables
@@ -53,14 +55,41 @@ export default function Page() {
     const handleNewUserSave = async () => {
         console.log("handleNewUserSave clicked!")
         const authUser = newUser
+
+        try {
+            const res = await fetch(API_LINK + "/auth_users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(authUser)
+            })
+
+            switch (res.status) {
+                case 200: 
+                    alert("User has been added successfully!");
+                    toggleRefresh();
+                    break;
+                case 409:
+                    alert("Email address already exists.");
+                    break;
+                case 400:
+                    alert("Bad request. Please check your input.");
+                    break;
+                default:
+                    alert("An unexpected error occurred with no status code.");
+
+            };
+
+        } catch (error) {
+            alert("Network error on handleNewUserSave(): " + error);
+        }
     }
 
     
     // ==> Effect hooks
     useEffect(() => {
-        const link = process.env.NEXT_PUBLIC_FLASK_API_URL
-        
-        fetch(link + "/auth_users").then((res) => {
+        fetch(API_LINK + "/auth_users").then((res) => {
             if (!res.ok) throw new Error("Network response was not okay")
             return res.json();
         }).then((data) => {
