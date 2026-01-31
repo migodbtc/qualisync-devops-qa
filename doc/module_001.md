@@ -1,4 +1,5 @@
-# Project Roadmap: Infrastructure & DevOps Prototype
+# Initial Project Module: Infrastructure & DevOps Prototype
+**Rationale for Creation**: Developer wishes to learn about the practice of DevOps development, quality assurance, automation, SDLC integration, and more to expand his skillset towards quality software engineering.
 **Objective:** Create a project that's less on development-focused but rather infrastructure or automation-focused this time.
 
 ## 🛠 Tech Stack
