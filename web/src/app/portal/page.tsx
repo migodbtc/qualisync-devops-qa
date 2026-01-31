@@ -16,11 +16,15 @@ export default function Page() {
     // ==> State variables
     const [users, setUsers] = useState<AuthUser[]>([]);
     const [selectedUser, setSelectedUser] = useState<AuthUser | undefined>();
-    const [editedUser, setEditedUser] = useState<AuthUser | undefined>(undefined);
+    const [editedUser, setEditedUser] = useState<Partial<AuthUser>>({email_address: "", password_hash: ""});
+    const [newUser, setNewUser] = useState<Partial<AuthUser>>({email_address: "", password_hash: ""});
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
 
+    const [isAddFormValid, setIsAddFormValid] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [isAdding, setIsAdding] = useState<boolean>(false);
     const [refreshToggle, setRefreshToggle] = useState<boolean>(false);
 
 
@@ -35,10 +39,21 @@ export default function Page() {
         setEditedUser({ ...editedUser, [name]: value });
     };
 
+    const handleAddInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!newUser) return;
+        const { name, value } = e.target;
+        setNewUser({ ...newUser, [name]: value });
+    };
+
     const handleSave = () => {
         // TBA: API logic. Frontend for now.
         console.log("handleSave clicked!")
     };
+
+    const handleNewUserSave = async () => {
+        console.log("handleNewUserSave clicked!")
+        const authUser = newUser
+    }
 
     
     // ==> Effect hooks
@@ -55,6 +70,14 @@ export default function Page() {
             console.error("Fetch error on /portal: ", error)
         })
     }, [refreshToggle]);
+
+    useEffect(() => {
+        const emailValid = /\S+@\S+\.\S+/.test(newUser.email_address ?? "");
+        const passwordValid = (newUser.password_hash ?? "").length >= 6;
+        const passwordsMatch = (newUser.password_hash ?? "") === confirmPassword;
+    
+        setIsAddFormValid(emailValid && passwordValid && passwordsMatch);
+    }, [newUser, confirmPassword]);
 
     useEffect(() => {
         if (isModalOpen && selectedUser) {
@@ -226,7 +249,7 @@ export default function Page() {
                         ) : (
                             <button
                                 className="px-2 py-1 bg-gray-400 text-white rounded hover:bg-gray-500 text-xs cursor-pointer"
-                                onClick={() => { setIsEditing(false); setEditedUser(selectedUser); }}
+                                onClick={() => { setIsEditing(false); setEditedUser({email_address: "", password_hash: ""}); }}
                                 type="button"
                             >
                                 Lock
@@ -254,23 +277,78 @@ export default function Page() {
                 isAddModalOpen && (
                     <AddAuthUserModal onClose={() => setIsAddModalOpen(false)}>
                         <h2 className="text-lg font-bold mb-2">New Auth User</h2>
-                        <div className="flex gap-2 w-full mt-4">
-                            <button
-                                className={`px-2 py-1 rounded text-xs cursor-pointer ${isEditing ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
-                                onClick={handleSave}
-                                type="button"
-                                disabled={!isEditing}
-                            >
-                                Save
-                            </button>
-                            <button
-                                className="px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer"
-                                onClick={() => setIsAddModalOpen(false)}
-                                type="button"
-                            >
-                                Close
-                            </button>
-                        </div>
+                        <form
+                            className="w-full"
+                            onSubmit={async e => {
+                                e.preventDefault();
+                                await handleNewUserSave();
+                                setIsAddModalOpen(false);
+                                setNewUser({"email_address": "", "password_hash": ""});
+                                setConfirmPassword("");
+                                setIsAdding(false);
+                            }}
+                        >
+                            <div className="flex w-full mb-4">
+                                <div className="w-1/2 pr-2">
+                                    <label className="block text-xs text-slate-500 mb-1">Email</label>
+                                    <input
+                                        type="email"
+                                        name="email_address"
+                                        className="w-full border border-slate-300 rounded px-2 py-1 text-xs"
+                                        value={newUser.email_address ?? ""}
+                                        onChange={handleAddInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="w-1/2 pl-2">
+                                    <label className="block text-xs text-slate-500 mb-1">Password</label>
+                                    <input
+                                        type="password"
+                                        name="password_hash"
+                                        className="w-full border border-slate-300 rounded px-2 py-1 text-xs"
+                                        value={newUser.password_hash ?? ""}
+                                        onChange={handleAddInputChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex w-full mb-4">
+                                <div className="w-1/2 pr-2">
+                                    <label className="block text-xs text-slate-500 mb-1">Confirm Password</label>
+                                    <input
+                                        type="password"
+                                        name="confirm_password"
+                                        className="w-full border border-slate-300 rounded px-2 py-1 text-xs"
+                                        value={confirmPassword}
+                                        onChange={e => setConfirmPassword(e.target.value)}
+                                        required
+                                    />
+                                    {(confirmPassword && newUser.password_hash !== confirmPassword) && (
+                                        <span className="text-xs text-red-500">Passwords do not match</span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex gap-2 w-full mt-4">
+                                <button
+                                    className={`px-2 py-1 rounded text-xs cursor-pointer ${isAddFormValid ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                                    type="submit"
+                                    disabled={!isAddFormValid}
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    className="px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer"
+                                    onClick={() => {
+                                        setIsAddModalOpen(false);
+                                        setNewUser({"email_address": "", "password_hash": ""});
+                                        setConfirmPassword("");
+                                    }}
+                                    type="button"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </form>
                     </AddAuthUserModal>
                 )
             }
