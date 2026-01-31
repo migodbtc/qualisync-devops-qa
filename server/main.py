@@ -1,5 +1,6 @@
 import random
 import string
+import bcrypt
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from sqlalchemy import Column, DateTime, Integer, String, create_engine 
@@ -109,9 +110,11 @@ def post_auth_user():
         if session.query(AuthUser).filter_by(email_address=req_email).first():
             return jsonify({"error": "Email address already exists within the database"}), 409
 
+        hashed_password = bcrypt.hashpw(req_pass.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
         new_user = AuthUser(
             email_address=req_email,
-            password_hash=random_hash(),
+            password_hash=hashed_password,
             created_at=datetime.now(),
             updated_at=datetime.now()
         )

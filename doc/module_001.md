@@ -13,16 +13,16 @@
 ## Phase 1: The "Walking Skeleton" (Local Build)
 *Goal: Create a minimal functional app to serve as the base for infrastructure work.*
 
-- [ ] **Database & Backend Implementation (Code-First Approach)**
+- [X] **Database & Backend Implementation (Code-First Approach)**
     - [x] Initialize Flask and SQLAlchemy.
     - [x] Define a Python Class `AuthUser` in `models.py`.
     - [x] **Challenge:** Do not create the table in MySQL Workbench. Use `db.create_all()` inside your Flask app context to generate the table automatically upon startup.
     - [X] Create endpoints: `GET /auth_users` and `POST /auth_users`.
-- [ ] **Frontend Implementation**
-    - [ ] Initialize Next.js using **pnpm** (`pnpm create next-app`).
-    - [ ] **Constraint:** Ensure you generate a `pnpm-lock.yaml` file, not `package-lock.json`.
-    - [ ] Create a simple UI to list users and a form to add a new user.
-    - [ ] Connect to the local Flask API.
+- [X] **Frontend Implementation**
+    - [X] Initialize Next.js using **pnpm** (`pnpm create next-app`).
+    - [X] **Constraint:** Ensure you generate a `pnpm-lock.yaml` file, not `package-lock.json`.
+    - [X] Create a simple UI to list users and a form to add a new user.
+    - [X] Connect to the local Flask API.
 
 ---
 
