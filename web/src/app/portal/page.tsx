@@ -18,10 +18,17 @@ export default function Page() {
     const [selectedUser, setSelectedUser] = useState<AuthUser | undefined>();
     const [editedUser, setEditedUser] = useState<AuthUser | undefined>(undefined);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [refreshToggle, setRefreshToggle] = useState<boolean>(false);
+
 
     // ==> Component functions
+    const toggleRefresh = () => {
+        setRefreshToggle(!refreshToggle)
+    };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!editedUser) return;
         const { name, value } = e.target;
@@ -47,7 +54,7 @@ export default function Page() {
         }).catch((error) => {
             console.error("Fetch error on /portal: ", error)
         })
-    }, []);
+    }, [refreshToggle]);
 
     useEffect(() => {
         if (isModalOpen && selectedUser) {
@@ -79,6 +86,16 @@ export default function Page() {
         </div>
     );
 
+    const AddAuthUserModal: FC<PropsWithChildren<{ onClose: () => void }>> = ({ children, onClose }) => (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800">
+            <div className="bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between">
+                <div>
+                    {children}
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="flex flex-col min-h-screen w-full items-center justify-center bg-zinc-50 font-sans dark:bg-slate-200">
 
@@ -98,7 +115,24 @@ export default function Page() {
             </header>
 
             <main className="flex flex-col min-h-screen w-full max-w-5xl items-center justify-between py-16 px-8 bg-slate-100 sm:items-start">
-                
+                <div className="flex flex-row justify-between gap-3 w-full min-h-8 mb-2">
+                    <div className="flex items-center ">
+                        <button
+                            className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs cursor-pointer"
+                            onClick={() => setIsAddModalOpen(true)}
+                            >
+                            New User
+                        </button>
+                    </div>
+                    <div className="flex items-center ">
+                        <button
+                            className="flex px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer"
+                            onClick={toggleRefresh}
+                            >
+                            Refresh
+                        </button>
+                    </div>
+                </div>
                 <table className="w-full border border-slate-300 rounded-md overflow-hidden mb-16">
                     <thead className="bg-slate-200">
                         <tr>
@@ -216,6 +250,30 @@ export default function Page() {
                     </div>
                 </TableModal>
             )}
+            {
+                isAddModalOpen && (
+                    <AddAuthUserModal onClose={() => setIsAddModalOpen(false)}>
+                        <h2 className="text-lg font-bold mb-2">New Auth User</h2>
+                        <div className="flex gap-2 w-full mt-4">
+                            <button
+                                className={`px-2 py-1 rounded text-xs cursor-pointer ${isEditing ? "bg-green-600 text-white hover:bg-green-700" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                                onClick={handleSave}
+                                type="button"
+                                disabled={!isEditing}
+                            >
+                                Save
+                            </button>
+                            <button
+                                className="px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-800 text-xs cursor-pointer"
+                                onClick={() => setIsAddModalOpen(false)}
+                                type="button"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </AddAuthUserModal>
+                )
+            }
         </div>
     );
 }
