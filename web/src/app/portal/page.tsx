@@ -14,41 +14,37 @@ interface AuthUser {
 const API_LINK = process.env.NEXT_PUBLIC_FLASK_API_URL;
 
 // ==> Subcomponents
-  const TableHeader: FC<PropsWithChildren> = ({ children }) => {
-    return (
-      <th className='px-4 py-2 text-left font-semibold text-slate-700'>
-        {children}
-      </th>
-    );
-  };
-
-  const TableRow: FC<PropsWithChildren> = ({ children }) => {
-    return <tr className='border-t border-slate-300'>{children}</tr>;
-  };
-
-  const TableData: FC<PropsWithChildren> = ({ children }) => {
-    return <td className='px-4 py-2 text-sm text-slate-800'>{children}</td>;
-  };
-
-  const TableModal: FC<PropsWithChildren> = ({
-    children,
-  }) => (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
-      <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
-        <div>{children}</div>
-      </div>
-    </div>
+const TableHeader: FC<PropsWithChildren> = ({ children }) => {
+  return (
+    <th className='px-4 py-2 text-left font-semibold text-slate-700'>
+      {children}
+    </th>
   );
+};
 
-  const AddAuthUserModal: FC<PropsWithChildren> = ({
-    children
-  }) => (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
-      <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
-        <div>{children}</div>
-      </div>
+const TableRow: FC<PropsWithChildren> = ({ children }) => {
+  return <tr className='border-t border-slate-300'>{children}</tr>;
+};
+
+const TableData: FC<PropsWithChildren> = ({ children }) => {
+  return <td className='px-4 py-2 text-sm text-slate-800'>{children}</td>;
+};
+
+const TableModal: FC<PropsWithChildren> = ({ children }) => (
+  <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
+    <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
+      <div>{children}</div>
     </div>
-  );
+  </div>
+);
+
+const AddAuthUserModal: FC<PropsWithChildren> = ({ children }) => (
+  <div className='fixed inset-0 z-50 flex items-center justify-center bg-gray-800/70 text-slate-800'>
+    <div className='bg-white rounded-lg shadow-lg p-6 min-w-2xl flex flex-col justify-between'>
+      <div>{children}</div>
+    </div>
+  </div>
+);
 
 export default function Page() {
   // ==> General Variables
@@ -63,7 +59,7 @@ export default function Page() {
     password_hash: "",
   });
 
-  // ==> Add Auth User Modal 
+  // ==> Add Auth User Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [newUser, setNewUser] = useState<Partial<AuthUser>>({
     email_address: "",
@@ -148,7 +144,6 @@ export default function Page() {
       });
   }, [refreshToggle]);
 
-
   return (
     <div className='flex flex-col min-h-screen w-full items-center justify-center bg-zinc-50 font-sans dark:bg-slate-200'>
       <header className='flex w-full max-w-5xl bg-slate-100 px-8 py-4 items-center justify-between'>
@@ -227,8 +222,7 @@ export default function Page() {
         </table>
       </main>
       {isModalOpen && (
-        <TableModal
-        >
+        <TableModal>
           <h2 className='text-lg font-bold mb-2'>
             Auth User No. {selectedUser?.auth_id}
           </h2>
@@ -331,7 +325,7 @@ export default function Page() {
         </TableModal>
       )}
       {isAddModalOpen && (
-        <AddAuthUserModal >
+        <AddAuthUserModal>
           <h2 className='text-lg font-bold mb-2'>New Auth User</h2>
           <form
             className='w-full'

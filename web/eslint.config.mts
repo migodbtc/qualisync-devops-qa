@@ -1,4 +1,3 @@
-
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
@@ -9,13 +8,8 @@ export default defineConfig([
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     plugins: { js },
-    extends: [
-      "js/recommended",
-      "next",
-      "next/core-web-vitals",
-      "prettier" 
-    ],
-    languageOptions: { globals: { ...globals.browser, ...globals.node } }
+    extends: ["js/recommended", "next", "next/core-web-vitals", "prettier"],
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,

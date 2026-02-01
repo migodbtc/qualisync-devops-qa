@@ -1,10 +1,12 @@
 [tool.black]
 line-length = 88
 exclude = '\\b(venv|.venv|db|pycache)\\b'
-target-version = ["py311"]
 
 [tool.flake8]
-line-length = 88
-exclude = venv,.venv,db,pycache
-ignore = E203,W503
-max-complexity = 10
+ignore = ['E231', 'E241']
+per-file-ignores = [
+    '__init__.py:F401',
+]
+max-line-length = 88
+count = true
+exclude = ["venv*", ".venv*", "db*", "pycache*"]

@@ -9,25 +9,27 @@
 
 ---
 
+
 ## Phase 1: ESLint Setup (Local)
 *Goal: Add ESLint to the project and configure it for TypeScript/Next.js.*
 
 - [X] **Install ESLint and Plugins**
     - [X] Use pnpm to add ESLint and recommended plugins as dev dependencies.
-- [ ] **Initialize ESLint Config**
-    - [ ] Run the ESLint init command and select options for Next.js/TypeScript.
-    - [ ] Adjust config to work with Prettier (extend eslint-config-prettier).
-- [ ] **Test ESLint Locally**
-    - [ ] Run ESLint on your codebase to check for issues.
+- [X] **Initialize ESLint Config**
+    - [X] Run the ESLint init command and select options for Next.js/TypeScript.
+    - [X] Adjust config to work with Prettier (extend eslint-config-prettier).
+- [X] **Test ESLint Locally**
+    - [X] Run ESLint on your codebase to check for issues.
 
 ---
+
 
 ## Phase 2: Automation Scripts
 *Goal: Add scripts to package.json for easy linting.*
 
-- [ ] **Add Lint Scripts**
-    - [ ] Add a script to run ESLint on all relevant files.
-    - [ ] Add a script to auto-fix issues with ESLint.
+- [X] **Add Lint Scripts**
+    - [X] Add a script to run ESLint on all relevant files.
+    - [X] Add a script to auto-fix issues with ESLint.
 
 ---
 
