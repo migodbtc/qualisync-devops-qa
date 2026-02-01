@@ -1,6 +1,19 @@
+[project]
+name = "qualisync-flask-api"
+description = "Basically the Flask API used for Qualisync project by Migo for learning DevOps, automation, quality assurance, linting, etc"
+
 [tool.black]
 line-length = 88
-exclude = '\\b(venv|.venv|db|pycache)\\b'
+exclude = '''
+(
+    /(
+        venv
+      | \.venv
+      | db
+      | pycache
+    )
+)
+'''
 
 [tool.flake8]
 ignore = ['E231', 'E241']
