@@ -1,6 +1,8 @@
 FROM node:20.11-alpine
+RUN corepack enable
 WORKDIR /app
 COPY package.json .
-RUN npm install
+COPY pnpm-lock.yaml .
+RUN pnpm install --frozen-lockfile
 COPY . . 
 CMD ["npm", "run", "dev"]
