@@ -17,7 +17,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      - NEXT_PUBLIC_API_URL=http://qualisync-api:5821
+      - NEXT_PUBLIC_FLASK_API_URL=http://127.0.0.1:5821
     depends_on: 
       - backend
     networks: 
