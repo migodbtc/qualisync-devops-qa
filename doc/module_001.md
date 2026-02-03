@@ -35,10 +35,10 @@
     - [X] Configure `.prettierrc`.
     - [X] Add scripts to `package.json`: `"format": "prettier --write ."` and `"check-format": "prettier --check ."`.
     - [X] **Test:** Run `pnpm run format` locally to verify it works.
-- [ ] **Backend Quality Tools**
-    - [ ] Install `black` (formatting) and `flake8` (logic/errors) in the Python virtual environment.
-    - [ ] Create `pyproject.toml` for Black configuration.
-    - [ ] Freeze dependencies: `pip freeze > requirements.txt`.
+- [X] **Backend Quality Tools**
+    - [X] Install `black` (formatting) and `flake8` (logic/errors) in the Python virtual environment.
+    - [X] Create `pyproject.toml` for Black configuration.
+    - [X] Freeze dependencies: `pip freeze > requirements.txt`.
 
 ---
 
