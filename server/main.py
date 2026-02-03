@@ -7,7 +7,7 @@ from sqlalchemy import Column, DateTime, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime, timedelta
 
-engine = create_engine("sqlite:///server/db/database.db")
+engine = create_engine("sqlite:///db/database.db")
 Base = declarative_base()
 
 
