@@ -42,14 +42,15 @@
 
 ---
 
+
 ## Phase 3: Containerization (Docker)
 *Goal: Solve "It works on my machine" by creating isolated environments.*
 
-- [ ] **Backend Dockerfile**
-    - [ ] Base Image: `python:3.9-slim`.
-    - [ ] Steps: Copy `requirements.txt` -> Run `pip install` -> Copy source code -> Run Flask command.
-- [ ] **Frontend Dockerfile (pnpm Challenge)**
-    - [ ] Base Image: `node:18-alpine`.
+- [X] **Backend Dockerfile**
+    - [X] Base Image: `python:3.9-slim`.
+    - [X] Steps: Copy `requirements.txt` -> Run `pip install` -> Copy source code -> Run Flask command.
+- [X] **Frontend Dockerfile (pnpm Challenge)**
+    - [X] Base Image: `node:18-alpine`.
     - **Hint 1:** The Alpine image does not have pnpm installed. Look up Node's **"Corepack"** feature to enable it before installing dependencies.
     - **Hint 2:** You must copy `pnpm-lock.yaml` alongside `package.json`.
     - **Hint 3:** Instead of `npm install`, look for the pnpm command that ensures the installed versions match the lockfile exactly (similar to `npm ci`).

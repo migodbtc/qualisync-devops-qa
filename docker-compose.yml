@@ -1,0 +1,24 @@
+# Orchestration to connect Nextjs, Flask, and MySQL
+
+services:
+  backend:
+    container_name: qualisync-api
+    build: ./server
+    ports:
+      - 5821:5821
+    volumes:
+      - ./server/db:/app/db
+    networks: 
+      - default
+
+  frontend:
+    container_name: qualisync-web
+    build: ./web
+    ports:
+      - 3000:3000
+    environment:
+      - NEXT_PUBLIC_API_URL=http://qualisync-api:5821
+    depends_on: 
+      - backend
+    networks: 
+      - default
