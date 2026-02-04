@@ -2,5 +2,5 @@ ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
 packages:
-  - 'web'
-  - 'server'
+  - "web"
+  - "server"
