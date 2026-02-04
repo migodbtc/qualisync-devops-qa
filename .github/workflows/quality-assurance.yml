@@ -47,11 +47,11 @@ jobs:
             - name: Enable & Prepare PNPM
               run: |
                 corepack enable
-                corepack prepare pnpm@8.15.5 --activate
+                corepack prepare pnpm@9.0 --activate
             
             - name: Install PNPM globally as Fallback
               if: failure()
-              run: npm install -g pnpm@8.15.5
+              run: npm install -g pnpm@9.0
             
             - name: NPM Package File & PNPM Lock File Checks
               run: |
