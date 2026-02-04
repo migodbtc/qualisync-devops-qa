@@ -47,7 +47,13 @@ jobs:
                 cache-dependency-path: web/pnpm-lock.yaml
 
             - name: Enable & Prepare PNPM
-              run: corepack prepare pnpm@8.15.5 --activate
+              run: |
+                corepack enable
+                corepack prepare pnpm@8.15.5 --activate
+            
+            - name: Install PNPM globally as Fallback
+              if: failure()
+              run: npm install -g pnpm@8.15.5
 
             - name: Install PNPM dependencies
               run: pnpm install --frozen-lockfile
