@@ -1,0 +1,67 @@
+name: Quality Control
+on: 
+    push:
+        branches: 
+            - main
+    pull_request:
+        types: [opened, synchronize]
+jobs:
+    backend-qa:
+        runs-on: ubuntu-latest
+        steps:
+
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with: 
+                python-version: 3.11
+
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip 
+                pip install -r requirements.txt
+              working-directory: server
+
+            - name: Run Linting Check (Black)
+              run: black . --check
+              working-directory: server
+
+            - name: Run Logic Check (Flake8)
+              run: flake8 .
+              working-directory: server
+
+    frontend-qa: 
+        runs-on: ubuntu-latest
+        steps: 
+
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with: 
+                node-version: 20.11
+                cache: 'pnpm'
+                cache-dependency-path: web/pnpm-lock.yaml
+
+            - name: Enable Corepack
+              run: corepack enable
+
+            - name: Install PNPM dependencies
+              run: pnpm install --frozen-lockfile
+              working-directory: web
+
+            - name: Run Lint Check (Prettier)
+              run: pnpm run format
+              working-directory: web
+
+            - name: Run Logic Check (ESLint)
+              run: pnpm run lint
+              working-directory: web
+
+            - name: Run Build
+              run: pnpm run build
+              working-directory: web
+    

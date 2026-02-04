@@ -54,12 +54,9 @@
     - **Hint 1:** The Alpine image does not have pnpm installed. Look up Node's **"Corepack"** feature to enable it before installing dependencies.
     - **Hint 2:** You must copy `pnpm-lock.yaml` alongside `package.json`.
     - **Hint 3:** Instead of `npm install`, look for the pnpm command that ensures the installed versions match the lockfile exactly (similar to `npm ci`).
-- [ ] **Orchestration (Docker Compose)**
-    - [ ] Create `docker-compose.yml`.
-    - [ ] Define Services: Backend, Frontend, DB (`mysql:8.0`).
-- [ ] **Networking & Race Conditions**
-    - [ ] Update Flask config: Change DB host from `localhost` to `db` (service name).
-    - [ ] Implement a "Wait" strategy (e.g., `wait-for-it.sh` or health checks) to ensure MySQL is ready before Flask attempts to connect.
+- [X] **Orchestration (Docker Compose)**
+    - [X] Create `docker-compose.yml`.
+    - [X] Define Services: Backend, Frontend
 
 ---
 

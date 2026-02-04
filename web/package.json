@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "pnpm exec eslint . && echo Linting has been finished, no problems has been identified!",
     "lint:fix": "pnpm exec eslint . --fix && echo Linting and auto-fixing complete! No remaining problems identified.",
-    "format": "prettier --write .",
-    "check-format": "prettier --check ."
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "dependencies": {
     "next": "16.1.6",
