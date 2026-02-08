@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS property_mgmt;
-USE property_mgmt;
+CREATE DATABASE IF NOT EXISTS fuchsia_atms_db;
+USE fuchsia_atms_db;
 -- 1. Roles (Admin, Tenant, Staff)
 CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,

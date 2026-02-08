@@ -5,22 +5,18 @@
 
 ## Objectives
 
-phase 1: backlog & planning 
-- create design docs like flowchart/user flow, UAL, lowfi wireframes etc (optional)
-- opt for mysql instead of sqlite from now on 
-- develop schema for upcoming revamp for web app
-- configure sqlalchemy to change ORM from old db to new db
-- maybe play with migrations
-
-phase 2: development and revamp of web sys solution
-
-- rebuild docker images & docker-compose
-
-phase 3: qa-focused (tentative title)
-
-phase 4: devops/ci focused (tentative title)
+redo the web application within the system to create more complex situations to engineer quality assurance tests, penetrate/improve cybersecurity, integrate automation and other devops practices etc
 
 ## Tasks
+
+- design the schema for the new database
+- install database and integrate into project
+- change from sqlite to mysql for flask
+- replace database/ with sqlite and place with migrations/
+- complete orm mapping
+- add additional sql queries such as linking apartment to tenant, associating tenant to bill etc. do at least 5
+- revamp authentication screens 1. login 2. register 3. forgot password (optional)
+- 
 
 ## Concepts & Notes
 
