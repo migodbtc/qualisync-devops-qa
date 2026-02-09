@@ -1,7 +1,8 @@
 import { Mail, Lock, User, UserPlus } from "lucide-react";
 
 export default function RegisterPage() {
-  return (<>
+  return (
+    <>
       <h2 className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
         Register for Thicket
       </h2>
@@ -60,6 +61,7 @@ export default function RegisterPage() {
             <span className='text-fuchsia-600'>Login</span>
           </a>
         </div>
-      </form></>
+      </form>
+    </>
   );
 }

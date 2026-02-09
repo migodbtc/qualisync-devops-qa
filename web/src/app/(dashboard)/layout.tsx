@@ -63,7 +63,7 @@ export default function DashboardLayout({
       icon: Mail,
       route: "/email",
       name: "Email Communications",
-    }
+    },
   ];
   const bottomNavItems = [
     {
@@ -75,7 +75,7 @@ export default function DashboardLayout({
       icon: Settings,
       route: "/settings",
       name: "Settings",
-    }
+    },
   ];
   const [open, setOpen] = useState(true);
   const toggle = () => setOpen((prev) => !prev);
@@ -97,17 +97,20 @@ export default function DashboardLayout({
             className={`flex flex-col gap-1 mt-4 ${open ? "mx-4" : "items-center px-2"}`}
           >
             {navItems.map(({ icon: Icon, route, name }) => {
-              const isActive = pathname === route || pathname.startsWith(route + "/");
+              const isActive =
+                pathname === route || pathname.startsWith(route + "/");
               return (
                 <a
                   key={route}
                   href={route}
                   className={`flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 focus:outline-none ${
-                    isActive ? "bg-white text-fuchsia-900 font-bold" : "hover:bg-fuchsia-900"
+                    isActive
+                      ? "bg-white text-fuchsia-900 font-bold"
+                      : "hover:bg-fuchsia-900"
                   }`}
                 >
                   <Icon className='w-5 h-5' />
-                  {open && <span className="whitespace-nowrap">{name}</span>}
+                  {open && <span className='whitespace-nowrap'>{name}</span>}
                 </a>
               );
             })}
@@ -116,17 +119,20 @@ export default function DashboardLayout({
             className={`flex flex-col gap-1 mt-auto mb-4 ${open ? "mx-4" : "items-center px-2"}`}
           >
             {bottomNavItems.map(({ icon: Icon, route, name }) => {
-              const isActive = pathname === route || pathname.startsWith(route + "/");
+              const isActive =
+                pathname === route || pathname.startsWith(route + "/");
               return (
                 <a
                   key={route}
                   href={route}
                   className={`flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 focus:outline-none ${
-                    isActive ? "bg-fuchsia-700 font-bold" : "hover:bg-fuchsia-900"
+                    isActive
+                      ? "bg-fuchsia-700 font-bold"
+                      : "hover:bg-fuchsia-900"
                   }`}
                 >
                   <Icon className='w-5 h-5' />
-                  {open && <span className="whitespace-nowrap">{name}</span>}
+                  {open && <span className='whitespace-nowrap'>{name}</span>}
                 </a>
               );
             })}
@@ -154,7 +160,7 @@ export default function DashboardLayout({
             {/* Add header content here */}
           </header>
           {/* Main content */}
-          <main className='h-[90vh] w-full px-8 py-6 overflow-auto text-slate-800'>
+          <main className='h-[90vh] w-full p-4 overflow-auto text-slate-800'>
             {children}
           </main>
         </div>
