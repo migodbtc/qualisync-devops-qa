@@ -1,9 +1,8 @@
-import AuthSplitLayout from "@/layout/AuthSplitLayout";
 import { Mail, Lock, LogIn } from "lucide-react";
 
 export default function LoginPage() {
   return (
-    <AuthSplitLayout>
+    <>
       <h2 className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
         Login to Thicket
       </h2>
@@ -62,6 +61,6 @@ export default function LoginPage() {
           </a>
         </div>
       </form>
-    </AuthSplitLayout>
+    </>
   );
 }

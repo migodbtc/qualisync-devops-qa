@@ -14,6 +14,7 @@ import {
   Settings,
 } from "lucide-react";
 import React, { createContext, useContext, useState } from "react";
+import { usePathname } from "next/navigation";
 
 // Sidebar context and hook
 const SidebarContext = createContext<{ open: boolean; toggle: () => void }>({
@@ -30,6 +31,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   // Sidebar nav items based on dashboard_features.md
   const navItems = [
     {
@@ -94,30 +96,40 @@ export default function DashboardLayout({
           <nav
             className={`flex flex-col gap-1 mt-4 ${open ? "mx-4" : "items-center px-2"}`}
           >
-            {navItems.map(({ icon: Icon, route, name }) => (
-              <a
-                key={route}
-                href={route}
-                className='flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 hover:bg-fuchsia-900 focus:outline-none'
-              >
-                <Icon className='w-5 h-5' />
-                {open && <span className="whitespace-nowrap">{name}</span>}
-              </a>
-            ))}
+            {navItems.map(({ icon: Icon, route, name }) => {
+              const isActive = pathname === route || pathname.startsWith(route + "/");
+              return (
+                <a
+                  key={route}
+                  href={route}
+                  className={`flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 focus:outline-none ${
+                    isActive ? "bg-white text-fuchsia-900 font-bold" : "hover:bg-fuchsia-900"
+                  }`}
+                >
+                  <Icon className='w-5 h-5' />
+                  {open && <span className="whitespace-nowrap">{name}</span>}
+                </a>
+              );
+            })}
           </nav>
           <nav
             className={`flex flex-col gap-1 mt-auto mb-4 ${open ? "mx-4" : "items-center px-2"}`}
           >
-            {bottomNavItems.map(({ icon: Icon, route, name }) => (
-              <a
-                key={route}
-                href={route}
-                className='flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 hover:bg-fuchsia-900 focus:outline-none'
-              >
-                <Icon className='w-5 h-5' />
-                {open && <span className="whitespace-nowrap">{name}</span>}
-              </a>
-            ))}
+            {bottomNavItems.map(({ icon: Icon, route, name }) => {
+              const isActive = pathname === route || pathname.startsWith(route + "/");
+              return (
+                <a
+                  key={route}
+                  href={route}
+                  className={`flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 focus:outline-none ${
+                    isActive ? "bg-fuchsia-700 font-bold" : "hover:bg-fuchsia-900"
+                  }`}
+                >
+                  <Icon className='w-5 h-5' />
+                  {open && <span className="whitespace-nowrap">{name}</span>}
+                </a>
+              );
+            })}
           </nav>
         </aside>
 
