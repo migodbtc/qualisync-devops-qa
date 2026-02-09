@@ -142,7 +142,7 @@ export default function DashboardLayout({
         {/* Main area */}
         <div className='flex flex-col flex-1'>
           {/* Header */}
-          <header className='h-[10vh] w-full bg-white border-b border-gray-200 flex items-center px-4'>
+          <header className='h-64 w-full bg-white border-b border-gray-200 flex items-center px-4'>
             <button
               className='aspect-square p-2 mr-2 rounded-lg text-gray-500 hover:bg-slate-200 focus:outline-none flex items-center justify-center cursor-pointer'
               onClick={toggle}
@@ -160,7 +160,7 @@ export default function DashboardLayout({
             {/* Add header content here */}
           </header>
           {/* Main content */}
-          <main className='h-[90vh] w-full p-4 overflow-auto text-slate-800'>
+          <main className='min-h-[90vh] w-full p-4 overflow-auto text-slate-800'>
             {children}
           </main>
         </div>
