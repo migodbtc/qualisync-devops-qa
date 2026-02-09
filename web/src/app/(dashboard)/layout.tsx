@@ -36,8 +36,8 @@ export default function DashboardLayout({
   const navItems = [
     {
       icon: LayoutDashboard,
-      route: "/dashboard",
-      name: "Dashboard",
+      route: "/home",
+      name: "Home",
     },
     {
       icon: Users,
@@ -79,6 +79,12 @@ export default function DashboardLayout({
   ];
   const [open, setOpen] = useState(true);
   const toggle = () => setOpen((prev) => !prev);
+
+  // Find current feature name for header
+  const allNavItems = [...navItems, ...bottomNavItems];
+  const currentFeature = allNavItems.find(({ route }) =>
+    pathname === route || pathname.startsWith(route + "/")
+  )?.name || "";
 
   return (
     <SidebarContext.Provider value={{ open, toggle }}>
@@ -155,7 +161,7 @@ export default function DashboardLayout({
               )}
             </button>
             <span className='text-xl font-bold text-fuchsia-800'>
-              ATMS Dashboard
+              {currentFeature || "ATMS"}
             </span>
             {/* Add header content here */}
           </header>
