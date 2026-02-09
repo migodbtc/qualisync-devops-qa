@@ -16,10 +16,20 @@ import {
 import React, { createContext, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
 
+
 // Sidebar context and hook
-const SidebarContext = createContext<{ open: boolean; toggle: () => void }>({
+type SidebarContextType = {
+  open: boolean;
+  toggle: () => void;
+  isTransitioning: boolean;
+  setIsTransitioning: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const SidebarContext = createContext<SidebarContextType>({
   open: false,
   toggle: () => {},
+  isTransitioning: false,
+  setIsTransitioning: () => {},
 });
 
 export function useSidebar() {
@@ -77,8 +87,23 @@ export default function DashboardLayout({
       name: "Settings",
     },
   ];
+
   const [open, setOpen] = useState(true);
-  const toggle = () => setOpen((prev) => !prev);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Handle sidebar transition state
+  const toggle = () => {
+    setIsTransitioning(true);
+    setOpen((prev) => !prev);
+  };
+
+  // End transition after animation duration (match duration-300)
+  React.useEffect(() => {
+    if (isTransitioning) {
+      const timeout = setTimeout(() => setIsTransitioning(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [isTransitioning]);
 
   // Find current feature name for header
   const allNavItems = [...navItems, ...bottomNavItems];
@@ -87,7 +112,7 @@ export default function DashboardLayout({
   )?.name || "";
 
   return (
-    <SidebarContext.Provider value={{ open, toggle }}>
+    <SidebarContext.Provider value={{ open, toggle, isTransitioning, setIsTransitioning }}>
       <div className='flex h-screen bg-gray-50'>
         {/* Sidebar */}
         <aside
@@ -100,7 +125,7 @@ export default function DashboardLayout({
             </h3>
           </div>
           <nav
-            className={`flex flex-col gap-1 mt-4 ${open ? "mx-4" : "items-center px-2"}`}
+            className={`flex flex-col gap-1 mt-4 ${open ? "mx-4" : "items-start px-2 justify-start text-left"}`}
           >
             {navItems.map(({ icon: Icon, route, name }) => {
               const isActive =
@@ -113,7 +138,7 @@ export default function DashboardLayout({
                     isActive
                       ? "bg-white text-fuchsia-900 font-bold"
                       : "hover:bg-fuchsia-900"
-                  }`}
+                  } ${open ? '' : 'justify-start items-start text-left'}`}
                 >
                   <Icon className='w-5 h-5' />
                   {open && <span className='whitespace-nowrap'>{name}</span>}
@@ -122,7 +147,7 @@ export default function DashboardLayout({
             })}
           </nav>
           <nav
-            className={`flex flex-col gap-1 mt-auto mb-4 ${open ? "mx-4" : "items-center px-2"}`}
+            className={`flex flex-col gap-1 mt-auto mb-4 ${open ? "mx-4" : "items-start px-2 justify-start text-left"}`}
           >
             {bottomNavItems.map(({ icon: Icon, route, name }) => {
               const isActive =
@@ -135,7 +160,7 @@ export default function DashboardLayout({
                     isActive
                       ? "bg-fuchsia-700 font-bold"
                       : "hover:bg-fuchsia-900"
-                  }`}
+                  } ${open ? '' : 'justify-start items-start text-left'}`}
                 >
                   <Icon className='w-5 h-5' />
                   {open && <span className='whitespace-nowrap'>{name}</span>}

@@ -1,7 +1,7 @@
 
 "use client"
 import React, { useState, useRef } from "react";
-import { Coins, AlertCircle, CalendarClock, TrendingUp, ChevronDown } from "lucide-react";
+import { Coins, AlertCircle, CalendarClock, TrendingUp, ChevronDown, Hourglass } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -15,6 +15,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import { useSidebar } from "../layout";
   // Mock data for revenue growth
   const revenueGrowth = [
     { month: "Mar 2025", revenue: 2000 },
@@ -40,6 +41,7 @@ export default function FinancePage() {
   const [growthScope, setGrowthScope] = useState("All Time");
   const [growthDropdownOpen, setGrowthDropdownOpen] = useState(false);
   const growthDropdownRef = useRef<HTMLDivElement>(null);
+  const { isTransitioning } = useSidebar();
 
   React.useEffect(() => {
     function handleGrowthClick(e: MouseEvent) {
@@ -212,15 +214,21 @@ export default function FinancePage() {
             </span>
           </div>
           <div className="flex-1 min-h-60">
-            <ResponsiveContainer width="100%" height={250}>
+            {isTransitioning ? (
+              <div className="w-full h-62.5 flex flex-col items-center justify-center text-slate-400">
+                <Hourglass size={32} className="mb-2 animate-spin-slow" />
+                Sidebar is transitioning...
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
               <LineChart data={revenueGrowth} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#64748b' }} angle={-30} textAnchor="end" height={60} />
                 <YAxis tick={{ fontSize: 12, fill: '#64748b' }} tickFormatter={v => `₱${v.toLocaleString()}`} />
                 <Tooltip formatter={v => `₱${v?.toLocaleString()}`} labelStyle={{ color: '#f472b6' }} contentStyle={{ borderRadius: 8, fontSize: 13 }} />
-                <Line type="monotone" dataKey="revenue" stroke="#a21caf" strokeWidth={3} dot={{ r: 4, fill: '#a21caf' }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="revenue" stroke="#a21caf" strokeWidth={3} dot={{ r: 4, fill: '#a21caf' }} activeDot={{ r: 6 }} isAnimationActive={false} />
               </LineChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer>)}
           </div>
           {/* Finance Statistics Section */}
           <div className="mt-4 grid grid-cols-1 gap-1">
@@ -258,7 +266,13 @@ export default function FinancePage() {
             </span>
           </div>
           <div className="flex-1 min-h-60 flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={250}>
+            {isTransitioning ? (
+              <div className="w-full h-62.5 flex flex-col items-center justify-center text-slate-400">
+                <Hourglass size={32} className="mb-2 animate-spin-slow" />
+                Sidebar is transitioning...
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
                   data={occupiedRoomsData}
@@ -268,6 +282,7 @@ export default function FinancePage() {
                   cy="50%"
                   outerRadius={80}
                   label={({ name, percent }) => `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`}
+                  isAnimationActive={false}
                 >
                   {occupiedRoomsData.map((entry, idx) => (
                     <Cell key={`cell-${idx}`} fill={pieColors[idx % pieColors.length]} />
@@ -276,7 +291,7 @@ export default function FinancePage() {
                 <Legend verticalAlign="bottom" height={36} iconType="circle"/>
                 <Tooltip formatter={(v, n) => [`${v} rooms`, n]} />
               </PieChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer>)}
           </div>
           {/* Room Financial Statistics Section */}
           <div className="mt-4 grid grid-cols-1 gap-1">
