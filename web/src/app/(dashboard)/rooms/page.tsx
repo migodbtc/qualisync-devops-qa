@@ -62,7 +62,7 @@ function UnassignedRoomCard({ room }: { room: Room }) {
         </div>
       </div>
       <div className='mt-auto w-full border-t border-transparent pt-2 flex justify-center min-h-10'>
-        <button className='h-7 px-3 rounded-xl font-semibold text-xs bg-green-600 border border-green-600 text-white hover:bg-green-700 transition-colors cursor-pointer'>
+        <button className='h-7 px-3 rounded-xl font-semibold text-xs bg-white border border-slate-300 text-green-700 hover:bg-green-50 transition-colors cursor-pointer'>
           Assign
         </button>
       </div>
