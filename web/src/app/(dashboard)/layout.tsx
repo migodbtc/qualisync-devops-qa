@@ -136,12 +136,12 @@ export default function DashboardLayout({
                   href={route}
                   className={`flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 focus:outline-none ${
                     isActive
-                      ? "bg-white text-fuchsia-900 font-bold"
+                      ? "bg-white text-fuchsia-700 font-bold border border-fuchsia-700"
                       : "hover:bg-fuchsia-900"
                   } ${open ? '' : 'justify-start items-start text-left'}`}
                 >
-                  <Icon className='w-5 h-5' />
-                  {open && <span className='whitespace-nowrap'>{name}</span>}
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-fuchsia-700' : ''}`} />
+                  {open && <span className={`whitespace-nowrap ${isActive ? 'text-fuchsia-700' : ''}`}>{name}</span>}
                 </a>
               );
             })}
@@ -158,12 +158,12 @@ export default function DashboardLayout({
                   href={route}
                   className={`flex items-center gap-2 text-sm rounded-lg transition-colors cursor-pointer px-2 py-2 focus:outline-none ${
                     isActive
-                      ? "bg-fuchsia-700 font-bold"
+                      ? "bg-white text-fuchsia-700 font-bold border border-fuchsia-700"
                       : "hover:bg-fuchsia-900"
                   } ${open ? '' : 'justify-start items-start text-left'}`}
                 >
-                  <Icon className='w-5 h-5' />
-                  {open && <span className='whitespace-nowrap'>{name}</span>}
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-fuchsia-700' : ''}`} />
+                  {open && <span className={`whitespace-nowrap ${isActive ? 'text-fuchsia-700' : ''}`}>{name}</span>}
                 </a>
               );
             })}
