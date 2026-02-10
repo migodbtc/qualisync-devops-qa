@@ -16,7 +16,17 @@ redo the web application within the system to create more complex situations to 
 - complete orm mapping
 - add additional sql queries such as linking apartment to tenant, associating tenant to bill etc. do at least 5
 - revamp authentication screens 1. login 2. register 3. forgot password (optional)
-- 
+- implement dashboard layout as well as the dashboard pages
+  - dashboard, tenants, rooms, payments, finance, email, profile, settings
+- complete ui/ux interaction 
+
+- implement backend routes connecting to mysql
+  - implement custom joins such as two table joins, three table joins depending on the feature page
+
+- defragment and optimize nextjs project using prettier then eslint then prettier again (post-eslint)
+- defragment and optimize flaskapi server using black then flake8 then black again (post-flake, or inverse, as long as formatting -> logic check -> formatting again)
+
+- deploy into cloud (no idea how)
 
 ## Concepts & Notes
 

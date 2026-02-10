@@ -1,12 +1,36 @@
-
 import React from "react";
-import { Users, CreditCard, CalendarCheck, AlertCircle, Search, Filter, ChevronDown, Home } from "lucide-react";
+import {
+  Users,
+  CreditCard,
+  CalendarCheck,
+  AlertCircle,
+  Search,
+  Filter,
+  ChevronDown,
+  Home,
+} from "lucide-react";
 
 const paymentSummary = [
-  { label: "Total Collected", value: "₱120,000", icon: <CreditCard className="text-fuchsia-700" size={22} /> },
-  { label: "Pending Payments", value: "₱8,500", icon: <AlertCircle className="text-fuchsia-700" size={22} /> },
-  { label: "Overdue", value: "₱2,000", icon: <AlertCircle className="text-fuchsia-700" size={22} /> },
-  { label: "Upcoming", value: "₱5,000", icon: <CalendarCheck className="text-fuchsia-700" size={22} /> },
+  {
+    label: "Total Collected",
+    value: "₱120,000",
+    icon: <CreditCard className='text-fuchsia-700' size={22} />,
+  },
+  {
+    label: "Pending Payments",
+    value: "₱8,500",
+    icon: <AlertCircle className='text-fuchsia-700' size={22} />,
+  },
+  {
+    label: "Overdue",
+    value: "₱2,000",
+    icon: <AlertCircle className='text-fuchsia-700' size={22} />,
+  },
+  {
+    label: "Upcoming",
+    value: "₱5,000",
+    icon: <CalendarCheck className='text-fuchsia-700' size={22} />,
+  },
 ];
 
 const paymentTypes = ["All", "Rent", "Deposit", "Utilities", "Other"];
@@ -97,9 +121,11 @@ const mockPayments = [
   },
 ];
 
-
-
-function PaymentTransactionItem({ payment }: { payment: typeof mockPayments[0] }) {
+function PaymentTransactionItem({
+  payment,
+}: {
+  payment: (typeof mockPayments)[0];
+}) {
   // Determine badge: On Time (green) or Late (red)
   const isLate = payment.status === "Overdue";
   const badgeText = isLate ? "Late" : "On Time";
@@ -107,29 +133,40 @@ function PaymentTransactionItem({ payment }: { payment: typeof mockPayments[0] }
     ? "bg-red-100 text-red-700"
     : "bg-green-100 text-green-700";
   return (
-    <div className="group flex flex-row items-center w-full bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-150 overflow-hidden px-4 py-6 cursor-pointer">
+    <div className='group flex flex-row items-center w-full bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-150 overflow-hidden px-4 py-6 cursor-pointer'>
       {/* Left Side */}
-      <div className="flex flex-row items-center gap-4 flex-1 min-w-0">
-        <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xl border border-slate-200 shrink-0">
+      <div className='flex flex-row items-center gap-4 flex-1 min-w-0'>
+        <div className='w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xl border border-slate-200 shrink-0'>
           {payment.user.avatar}
         </div>
-        <div className="flex flex-col min-w-0">
-          <div className="flex flex-row items-center gap-2">
-            <span className="text-2xl font-bold text-slate-700">₱{payment.amount.toLocaleString()}</span>
-            <span className={`text-xs font-semibold tracking-wide px-2 py-0.5 rounded-full capitalize ${badgeClass}`}>
+        <div className='flex flex-col min-w-0'>
+          <div className='flex flex-row items-center gap-2'>
+            <span className='text-2xl font-bold text-slate-700'>
+              ₱{payment.amount.toLocaleString()}
+            </span>
+            <span
+              className={`text-xs font-semibold tracking-wide px-2 py-0.5 rounded-full capitalize ${badgeClass}`}
+            >
               {badgeText}
             </span>
           </div>
-          <span className="font-semibold text-slate-500 text-base truncate">{payment.user.name}</span>
-          <span className="text-xs text-slate-400 truncate">{payment.user.email}</span>
+          <span className='font-semibold text-slate-500 text-base truncate'>
+            {payment.user.name}
+          </span>
+          <span className='text-xs text-slate-400 truncate'>
+            {payment.user.email}
+          </span>
         </div>
       </div>
       {/* Right Side */}
-      <div className="flex flex-col items-end justify-center gap-1 min-w-35 pl-6 border-l border-slate-100 bg-slate-50 h-full">
-        
-        <span className="text-xs text-slate-400">{payment.type}</span>
-        <span className="text-sm text-slate-500 font-medium">{payment.reason}</span>
-        <span className="text-xs text-slate-400">{new Date(payment.date).toLocaleDateString()}</span>
+      <div className='flex flex-col items-end justify-center gap-1 min-w-35 pl-6 border-l border-slate-100 bg-slate-50 h-full'>
+        <span className='text-xs text-slate-400'>{payment.type}</span>
+        <span className='text-sm text-slate-500 font-medium'>
+          {payment.reason}
+        </span>
+        <span className='text-xs text-slate-400'>
+          {new Date(payment.date).toLocaleDateString()}
+        </span>
       </div>
     </div>
   );
@@ -137,99 +174,150 @@ function PaymentTransactionItem({ payment }: { payment: typeof mockPayments[0] }
 
 export default function PaymentsPage() {
   return (
-    <div className="w-full h-fit flex flex-col gap-1 mb-12">
+    <div className='w-full h-fit flex flex-col gap-1 mb-12'>
       {/* First Row: Summary Cards */}
-      <div className="w-full h-44 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+      <div className='w-full h-44 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2'>
         {paymentSummary.map((card, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl p-4 py-8 border border-slate-300 flex flex-col justify-center items-start gap-2 shadow-sm h-full min-h-27.5 max-h-44"
+            className='bg-white rounded-xl p-4 py-8 border border-slate-300 flex flex-col justify-center items-start gap-2 shadow-sm h-full min-h-27.5 max-h-44'
           >
-            <div className="mb-1">
+            <div className='mb-1'>
               {/* Use the icon as in tenants card, with text-fuchsia-700 for main, or card-specific color if needed */}
-              {React.cloneElement(card.icon, { className: (card.icon.props.className || "") + " text-fuchsia-700" })}
+              {React.cloneElement(card.icon, {
+                className:
+                  (card.icon.props.className || "") + " text-fuchsia-700",
+              })}
             </div>
-            <span className="text-3xl font-bold text-slate-700 mb-1 text-left">{card.value}</span>
-            <span className="text-xs text-slate-500 text-left italic">{card.label}</span>
+            <span className='text-3xl font-bold text-slate-700 mb-1 text-left'>
+              {card.value}
+            </span>
+            <span className='text-xs text-slate-500 text-left italic'>
+              {card.label}
+            </span>
           </div>
         ))}
       </div>
 
       {/* Second Row: Filters/Search */}
-      <div className="w-full bg-white rounded-x flex flex-wrap items-center gap-2 my-2">
-        <div className="flex flex-row gap-2 items-end">
-          <div className="flex flex-col">
-            <label htmlFor="type-filter" className="text-xs text-slate-500 mb-0.5 ml-1">Type</label>
-            <select id="type-filter" className="w-28 h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer">
+      <div className='w-full bg-white rounded-x flex flex-wrap items-center gap-2 my-2'>
+        <div className='flex flex-row gap-2 items-end'>
+          <div className='flex flex-col'>
+            <label
+              htmlFor='type-filter'
+              className='text-xs text-slate-500 mb-0.5 ml-1'
+            >
+              Type
+            </label>
+            <select
+              id='type-filter'
+              className='w-28 h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer'
+            >
               {paymentTypes.map((type) => (
                 <option key={type}>{type}</option>
               ))}
             </select>
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="status-filter" className="text-xs text-slate-500 mb-0.5 ml-1">Status</label>
-            <select id="status-filter" className="w-28 h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer">
+          <div className='flex flex-col'>
+            <label
+              htmlFor='status-filter'
+              className='text-xs text-slate-500 mb-0.5 ml-1'
+            >
+              Status
+            </label>
+            <select
+              id='status-filter'
+              className='w-28 h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer'
+            >
               {paymentStatus.map((status) => (
                 <option key={status}>{status}</option>
               ))}
             </select>
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="date-from" className="text-xs text-slate-500 mb-0.5 ml-1">From</label>
+          <div className='flex flex-col'>
+            <label
+              htmlFor='date-from'
+              className='text-xs text-slate-500 mb-0.5 ml-1'
+            >
+              From
+            </label>
             <input
-              id="date-from"
-              type="date"
-              className="h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer"
+              id='date-from'
+              type='date'
+              className='h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer'
             />
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="date-to" className="text-xs text-slate-500 mb-0.5 ml-1">To</label>
+          <div className='flex flex-col'>
+            <label
+              htmlFor='date-to'
+              className='text-xs text-slate-500 mb-0.5 ml-1'
+            >
+              To
+            </label>
             <input
-              id="date-to"
-              type="date"
-              className="h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer"
+              id='date-to'
+              type='date'
+              className='h-9 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-2 focus:outline-none cursor-pointer'
             />
           </div>
         </div>
-        <div className="flex flex-row gap-2 ml-auto items-end">
-          <div className="flex flex-col">
-            <label htmlFor="search-input" className="text-xs text-slate-500 mb-0.5 ml-1">Search</label>
-            <div className="relative">
+        <div className='flex flex-row gap-2 ml-auto items-end'>
+          <div className='flex flex-col'>
+            <label
+              htmlFor='search-input'
+              className='text-xs text-slate-500 mb-0.5 ml-1'
+            >
+              Search
+            </label>
+            <div className='relative'>
               <input
-                id="search-input"
-                type="text"
-                placeholder="Search user, room..."
-                className="h-9 w-48 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-8 focus:outline-none"
+                id='search-input'
+                type='text'
+                placeholder='Search user, room...'
+                className='h-9 w-48 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm px-8 focus:outline-none'
               />
-              <Search className="absolute left-2 top-2.5 text-slate-400" size={16} />
+              <Search
+                className='absolute left-2 top-2.5 text-slate-400'
+                size={16}
+              />
             </div>
           </div>
-          <button className="h-9 px-4 rounded-xl font-semibold text-xs bg-fuchsia-700 text-white shadow hover:bg-fuchsia-800 transition-colors cursor-pointer flex items-center gap-1 mt-5">
+          <button className='h-9 px-4 rounded-xl font-semibold text-xs bg-fuchsia-700 text-white shadow hover:bg-fuchsia-800 transition-colors cursor-pointer flex items-center gap-1 mt-5'>
             <Filter size={16} /> More Filters
           </button>
         </div>
       </div>
 
       {/* Third Row: Transaction Log */}
-      <div className="w-full flex flex-col gap-3 min-h-100 ">
-        <div className="flex flex-col gap-2">
+      <div className='w-full flex flex-col gap-3 min-h-100 '>
+        <div className='flex flex-col gap-2'>
           {/* Group by month/year for headers */}
           {(() => {
             // Sort payments descending by date
-            const sorted = [...mockPayments].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            const sorted = [...mockPayments].sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+            );
             const groups: { [key: string]: typeof mockPayments } = {};
             sorted.forEach((p) => {
               const d = new Date(p.date);
-              const key = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+              const key = d.toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+              });
               if (!groups[key]) groups[key] = [];
               groups[key].push(p);
             });
             return Object.entries(groups).map(([month, items]) => (
               <React.Fragment key={month}>
-                <div className="text-base font-bold text-slate-500 mt-2 mb-1">{month}</div>
-                <div className="flex flex-col gap-2">
+                <div className='text-base font-bold text-slate-500 mt-2 mb-1'>
+                  {month}
+                </div>
+                <div className='flex flex-col gap-2'>
                   {items.map((payment) => (
-                    <PaymentTransactionItem key={payment.id} payment={payment} />
+                    <PaymentTransactionItem
+                      key={payment.id}
+                      payment={payment}
+                    />
                   ))}
                 </div>
               </React.Fragment>

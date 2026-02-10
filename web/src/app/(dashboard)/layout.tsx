@@ -16,7 +16,6 @@ import {
 import React, { createContext, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
 
-
 // Sidebar context and hook
 type SidebarContextType = {
   open: boolean;
@@ -107,12 +106,15 @@ export default function DashboardLayout({
 
   // Find current feature name for header
   const allNavItems = [...navItems, ...bottomNavItems];
-  const currentFeature = allNavItems.find(({ route }) =>
-    pathname === route || pathname.startsWith(route + "/")
-  )?.name || "";
+  const currentFeature =
+    allNavItems.find(
+      ({ route }) => pathname === route || pathname.startsWith(route + "/"),
+    )?.name || "";
 
   return (
-    <SidebarContext.Provider value={{ open, toggle, isTransitioning, setIsTransitioning }}>
+    <SidebarContext.Provider
+      value={{ open, toggle, isTransitioning, setIsTransitioning }}
+    >
       <div className='flex h-screen bg-gray-50'>
         {/* Sidebar */}
         <aside
@@ -138,10 +140,18 @@ export default function DashboardLayout({
                     isActive
                       ? "bg-white text-fuchsia-700 font-bold border border-fuchsia-700"
                       : "hover:bg-fuchsia-900"
-                  } ${open ? '' : 'justify-start items-start text-left'}`}
+                  } ${open ? "" : "justify-start items-start text-left"}`}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-fuchsia-700' : ''}`} />
-                  {open && <span className={`whitespace-nowrap ${isActive ? 'text-fuchsia-700' : ''}`}>{name}</span>}
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-fuchsia-700" : ""}`}
+                  />
+                  {open && (
+                    <span
+                      className={`whitespace-nowrap ${isActive ? "text-fuchsia-700" : ""}`}
+                    >
+                      {name}
+                    </span>
+                  )}
                 </a>
               );
             })}
@@ -160,10 +170,18 @@ export default function DashboardLayout({
                     isActive
                       ? "bg-white text-fuchsia-700 font-bold border border-fuchsia-700"
                       : "hover:bg-fuchsia-900"
-                  } ${open ? '' : 'justify-start items-start text-left'}`}
+                  } ${open ? "" : "justify-start items-start text-left"}`}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-fuchsia-700' : ''}`} />
-                  {open && <span className={`whitespace-nowrap ${isActive ? 'text-fuchsia-700' : ''}`}>{name}</span>}
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-fuchsia-700" : ""}`}
+                  />
+                  {open && (
+                    <span
+                      className={`whitespace-nowrap ${isActive ? "text-fuchsia-700" : ""}`}
+                    >
+                      {name}
+                    </span>
+                  )}
                 </a>
               );
             })}
