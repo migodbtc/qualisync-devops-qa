@@ -1,3 +1,4 @@
+"use client"
 import { Mail, Lock, LogIn } from "lucide-react";
 
 export default function LoginPage() {
@@ -48,9 +49,18 @@ export default function LoginPage() {
             />
           </div>
         </div>
+        {/*
         <button
           type='submit'
           className='bg-fuchsia-600 text-white font-semibold py-2 mt-4 rounded-md hover:bg-fuchsia-700 transition cursor-pointer'
+        >
+          Login
+        </button>
+        */}
+        <button
+          type='button'
+          className='bg-fuchsia-600 text-white font-semibold py-2 mt-4 rounded-md hover:bg-fuchsia-700 transition cursor-pointer'
+          onClick={() => window.location.href = "/home"}
         >
           Login
         </button>
