@@ -1,6 +1,38 @@
+
+"use client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Edit3, Key, LogOut, Download, Monitor } from "lucide-react";
 
 export default function ProfilePage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
+
+  const handleLogout = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        setError("Logout failed");
+        setLoading(false);
+        return;
+      }
+      localStorage.removeItem("access_token");
+      router.push("/login");
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='w-full h-fit grid grid-cols-10 gap-2 mb-12'>
       {/* 70% Main Card: Edit/View User Info */}
@@ -167,9 +199,15 @@ export default function ProfilePage() {
             <button className='flex flex-row items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-300 text-fuchsia-700 text-xs font-semibold hover:bg-fuchsia-50 hover:border-fuchsia-700 hover:text-fuchsia-800 transition-colors cursor-pointer'>
               <Monitor size={18} className='text-fuchsia-700' /> Manage Sessions
             </button>
-            <button className='flex flex-row items-center gap-2 px-4 py-2 rounded-xl bg-white border border-red-500 text-red-600 text-xs font-semibold hover:bg-red-50 hover:border-red-600 hover:text-red-800 transition-colors cursor-pointer'>
-              <LogOut size={18} className='text-red-600' /> Logout
+            <button
+              className='flex flex-row items-center gap-2 px-4 py-2 rounded-xl bg-white border border-red-500 text-red-600 text-xs font-semibold hover:bg-red-50 hover:border-red-600 hover:text-red-800 transition-colors cursor-pointer disabled:opacity-60'
+              onClick={handleLogout}
+              disabled={loading}
+            >
+              <LogOut size={18} className='text-red-600' />
+              {loading ? "Logging out..." : "Logout"}
             </button>
+            {error && <div className='text-xs text-red-500 mt-2'>{error}</div>}
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 import { Mail, Lock, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function RegisterPage() {
@@ -14,6 +15,7 @@ export default function RegisterPage() {
   const [agreedTnC, setAgreedTnC] = useState(false);
   const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,16 +39,45 @@ export default function RegisterPage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Registration failed");
-      } else {
-        setSuccess("Registration successful! You can now log in.");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-        setUsername("");
-        setRole("tenant");
-        setAgreedTnC(false);
-        setAgreedPrivacy(false);
+        return 
       }
+
+      const savedEmail = email;
+      const savedPassword = password;
+
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setUsername("");
+      setRole("tenant");
+      setAgreedTnC(false);
+      setAgreedPrivacy(false);
+
+      // autologin on register
+
+      try {
+        const loginRes = await fetch(`${API_URL}/auth/login`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          credentials: "include", 
+          body: JSON.stringify({email, password}),
+        })
+
+        const loginData = await loginRes.json();
+
+        if (!loginRes.ok) {
+          setError(loginData.error || "Attempted login post-registration failed!");
+          return
+        }
+
+        localStorage.setItem("access_token", loginData.access_token);
+
+        router.replace('/home')
+      } catch (err) {
+        setError("Login post-registration error")
+      }
+      
+      
     } catch (err) {
       setError("Network error");
     } finally {

@@ -232,7 +232,7 @@ def login():
     resp = make_response(jsonify({'access_token': access_token, 'token_type': 'bearer'}))
     cookie_name = app.config.get('JWT_REFRESH_COOKIE_NAME', 'refresh_token_cookie')
     secure_flag = app.config.get('JWT_COOKIE_SECURE', False)
-    samesite = app.config.get('JWT_COOKIE_SAMESITE', 'Lax')
+    samesite = app.config.get('JWT_COOKIE_SAMESITE', 'None')
     resp.set_cookie(cookie_name, refresh_token, httponly=True, secure=secure_flag, samesite=samesite, expires=expires_at, path='/')
     return resp
 
@@ -254,6 +254,25 @@ def logout():
     if affected:
         return jsonify({'revoked': True})
     return jsonify({'revoked': False}), 400
+
+@app.route('/auth/session', methods=['GET'])
+@jwt_required(refresh=True, locations=['cookies'])
+def session_info():
+    identity = get_jwt_identity()
+    user = session.query(AuthUser).filter_by(id=identity).first()
+    if not user:
+        return jsonify({'authenticated': False}), 401
+    role_obj = session.query(Role).filter_by(id=user.role_id).first()
+    return jsonify({
+        'authenticated': True,
+        'user': {
+            'id': user.id,
+            'email': user.email,
+            'username': user.username,
+            'role': role_obj.name if role_obj else None,
+        }
+    })
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5821)

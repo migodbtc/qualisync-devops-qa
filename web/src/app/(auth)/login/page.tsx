@@ -1,7 +1,8 @@
 
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,11 +10,14 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
+  const router = useRouter();
+
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    console.log("Login attempt", { email, password });
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -21,51 +25,22 @@ export default function LoginPage() {
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
+      
       const data = await res.json();
+      
       if (!res.ok) {
         setError(data.error || "Login failed");
       } else {
         localStorage.setItem("access_token", data.access_token);
-        window.location.href = "/home";
+        router.replace('/home')
       }
     } catch (err) {
       setError("Network error");
     } finally {
       setLoading(false);
     }
-
-    return (
-      <div className='max-w-md mx-auto mt-16 p-6 bg-white rounded shadow'>
-        <h2 className='text-2xl font-bold mb-4'>Login</h2>
-        <form onSubmit={handleLogin} className='space-y-4'>
-          <input
-            type='email'
-            placeholder='Email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className='w-full border p-2 rounded'
-            required
-          />
-          <input
-            type='password'
-            placeholder='Password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className='w-full border p-2 rounded'
-            required
-          />
-          {error && <div className='text-red-500'>{error}</div>}
-          <button
-            type='submit'
-            className='w-full bg-blue-600 text-white py-2 rounded'
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-      </div>
-    );
   };
+
   return (
     <>
       <h2 className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
