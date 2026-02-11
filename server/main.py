@@ -232,7 +232,7 @@ def login():
     resp = make_response(jsonify({'access_token': access_token, 'token_type': 'bearer'}))
     cookie_name = app.config.get('JWT_REFRESH_COOKIE_NAME', 'refresh_token_cookie')
     secure_flag = app.config.get('JWT_COOKIE_SECURE', False)
-    samesite = app.config.get('JWT_COOKIE_SAMESITE', 'None')
+    samesite = app.config.get('JWT_COOKIE_SAMESITE', 'Lax')
     resp.set_cookie(cookie_name, refresh_token, httponly=True, secure=secure_flag, samesite=samesite, expires=expires_at, path='/')
     return resp
 
@@ -258,12 +258,17 @@ def logout():
 @app.route('/auth/session', methods=['GET'])
 @jwt_required(refresh=True, locations=['cookies'])
 def session_info():
+    print("/auth/session called")
     identity = get_jwt_identity()
+    print(f"get_jwt_identity() returned: {identity}")
     user = session.query(AuthUser).filter_by(id=identity).first()
+    print(f"User lookup by id={identity}: {user}")
     if not user:
+        print("No user found, returning 401")
         return jsonify({'authenticated': False}), 401
     role_obj = session.query(Role).filter_by(id=user.role_id).first()
-    return jsonify({
+    print(f"Role lookup for user.role_id={user.role_id}: {role_obj}")
+    resp = {
         'authenticated': True,
         'user': {
             'id': user.id,
@@ -271,7 +276,14 @@ def session_info():
             'username': user.username,
             'role': role_obj.name if role_obj else None,
         }
-    })
+    }
+    print(f"Returning session info: {resp}")
+    return jsonify(resp)
+
+@app.route("/debug/cookies")
+def debug_cookies():
+    print("Cookies received:", request.cookies)
+    return jsonify({k: v for k, v in request.cookies.items()})
 
 
 if __name__ == "__main__":

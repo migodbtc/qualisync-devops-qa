@@ -31,6 +31,7 @@ export default function LoginPage() {
       if (!res.ok) {
         setError(data.error || "Login failed");
       } else {
+        console.log("Access Token: " + data.access_token)
         localStorage.setItem("access_token", data.access_token);
         router.replace('/home')
       }

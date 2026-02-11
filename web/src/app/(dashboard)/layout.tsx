@@ -14,7 +14,7 @@ import {
   Settings,
 } from "lucide-react";
 import React, { createContext, useContext, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 // Sidebar context and hook
 type SidebarContextType = {
@@ -41,6 +41,48 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [session, setSession] = useState<any>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [sessionError, setSessionError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function fetchSession() {
+      const DEBUG = false
+      setSessionLoading(true);
+      setSessionError(null);
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
+
+        if (DEBUG) {
+          const res = await fetch(`${apiUrl}/debug/cookies`)
+          return 
+        }
+
+        const res = await fetch(`${apiUrl}/auth/session`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (res.status === 401) {
+          // Not authenticated, redirect to login
+          router.replace("/login");
+          return;
+        }
+        if (!res.ok) {
+          throw new Error("Session fetch failed");
+        }
+        const data = await res.json();
+        setSession(data);
+      } catch (err: any) {
+        setSessionError(err.message || "Session error");
+        setSession(null);
+      } finally {
+        setSessionLoading(false);
+      }
+    }
+    fetchSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
   // Sidebar nav items based on dashboard_features.md
   const navItems = [
     {
@@ -115,7 +157,13 @@ export default function DashboardLayout({
     <SidebarContext.Provider
       value={{ open, toggle, isTransitioning, setIsTransitioning }}
     >
-      <div className='flex h-screen bg-gray-50'>
+      <div className='flex h-screen bg-gray-50 relative'>
+        {/* Loading overlay */}
+        {sessionLoading && (
+          <div className='absolute inset-0 z-50 flex items-center justify-center bg-white bg-opacity-20'>
+            <div className='animate-spin rounded-full h-16 w-16 border-t-4 border-fuchsia-700 border-solid'></div>
+          </div>
+        )}
         {/* Sidebar */}
         <aside
           className={`transition-all duration-300 bg-fuchsia-800 text-white flex flex-col ${open ? "w-64" : "w-12"} min-h-screen shadow-lg`}
@@ -206,7 +254,20 @@ export default function DashboardLayout({
             <span className='text-xl font-bold text-fuchsia-800'>
               {currentFeature || "ATMS"}
             </span>
-            {/* Add header content here */}
+            {/* Session info display */}
+            <div className='ml-auto flex flex-col items-end'>
+              {sessionError ? (
+                <span className='text-red-500 text-sm'>Session error</span>
+              ) : session ? (
+                <span className='text-sm text-fuchsia-700 font-semibold'>
+                  User: {session.username || session.email || "Unknown"}
+                  <br />Session ID: {session.session_id || "-"}
+                  <br />Expires: {session.expires_at || "-"}
+                </span>
+              ) : (
+                <span className='text-gray-400 text-sm'>No session</span>
+              )}
+            </div>
           </header>
           {/* Main content */}
           <main className='min-h-[90vh] w-full p-4 overflow-auto text-slate-800'>
