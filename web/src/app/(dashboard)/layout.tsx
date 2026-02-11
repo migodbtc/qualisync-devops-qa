@@ -258,12 +258,18 @@ export default function DashboardLayout({
             <div className='ml-auto flex flex-col items-end'>
               {sessionError ? (
                 <span className='text-red-500 text-sm'>Session error</span>
-              ) : session ? (
-                <span className='text-sm text-fuchsia-700 font-semibold'>
-                  User: {session.username || session.email || "Unknown"}
-                  <br />Session ID: {session.session_id || "-"}
-                  <br />Expires: {session.expires_at || "-"}
-                </span>
+              ) : session && session.user ? (
+                <div className='flex flex-row items-center gap-2 mr-2'>
+                  <User className='w-9 h-9 text-slate-500' />
+                  <div className='flex flex-col'>
+                    <span className='font-bold text-fuchsia-800 text-sm'>
+                      {session.user.username || session.user.email || "Unknown"}
+                    </span>
+                    <span className='italic text-slate-500 text-xs'>
+                      {session.user.email}
+                    </span>
+                  </div>
+                </div>
               ) : (
                 <span className='text-gray-400 text-sm'>No session</span>
               )}
