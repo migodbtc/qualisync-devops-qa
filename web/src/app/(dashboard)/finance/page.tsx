@@ -123,16 +123,6 @@ export default function FinancePage() {
   const pieColors = ["#a21caf", "#d946ef", "#f0abfc", "#f472b6"];
 
   // Mock info for financial stats
-  const highestPaidRoom = (
-    <>
-      Room 105 <span className='text-green-600'>(₱18,000)</span>
-    </>
-  );
-  const mostOverdueRoom = (
-    <>
-      Room 102 <span className='text-red-600'>(₱2,500)</span>
-    </>
-  );
   const mostCommonType = "Studio";
   const totalOccupied = 10;
 

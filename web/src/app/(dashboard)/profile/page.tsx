@@ -42,6 +42,7 @@ export default function ProfilePage() {
       localStorage.removeItem("refresh_token_cookie");
       router.push("/login");
     } catch (err) {
+      console.log("Network error: ", err)
       setError("Network error");
     } finally {
       setLoading(false);

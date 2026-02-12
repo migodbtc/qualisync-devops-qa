@@ -11,7 +11,6 @@ import {
   AlignRight,
   Link,
   Paperclip,
-  Palette,
   User,
   Shield,
   Mail,

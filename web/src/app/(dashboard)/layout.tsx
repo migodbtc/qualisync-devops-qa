@@ -16,6 +16,18 @@ import {
 import React, { createContext, useContext, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+type SessionUser = {
+  id: number;
+  email: string;
+  username: string;
+  role: string | null;
+};
+
+type Session = {
+  authenticated: boolean;
+  user?: SessionUser;
+};
+
 // Sidebar context and hook
 type SidebarContextType = {
   open: boolean;
@@ -51,7 +63,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [sessionLoading, setSessionLoading] = useState(true);
   const [sessionError, setSessionError] = useState<string | null>(null);
 
@@ -74,17 +86,23 @@ export default function DashboardLayout({
         if (!res.ok) {
           throw new Error("Session fetch failed");
         }
-        const data = await res.json();
+        const data: Session = await res.json();
         setSession(data);
-      } catch (err: any) {
-        setSessionError(err.message || "Session error");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setSessionError(err.message);
+        } else if (typeof err === "string") {
+          setSessionError(err);
+        } else {
+          setSessionError("Session error");
+        }
         setSession(null);
       } finally {
         setSessionLoading(false);
       }
     }
     fetchSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [router]);
   // Sidebar nav items based on dashboard_features.md
   const navItems = [

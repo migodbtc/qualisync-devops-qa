@@ -1,5 +1,3 @@
-import random
-import string
 import bcrypt
 from datetime import timezone
 from flask import Flask, jsonify, make_response, request
@@ -200,6 +198,7 @@ def revoke_jti(jti):
 def find_by_jti(jti):
     return db.query(RefreshToken).filter_by(token=jti).first()
 
+
 def create_session(user_id, session_id, user_agent, ip_address, expires_at):
     new_session = Session(
         user_id=user_id,
@@ -208,11 +207,12 @@ def create_session(user_id, session_id, user_agent, ip_address, expires_at):
         ip_address=ip_address,
         created_at=datetime.now(),
         expires_at=expires_at,
-        revoked=0
+        revoked=0,
     )
     db.add(new_session)
     db.commit()
     return new_session
+
 
 def revoke_session(session_id):
     sess = db.query(Session).filter_by(session_id=session_id, revoked=0).first()
@@ -281,8 +281,8 @@ def login():
     expires_at_str = expires_at.strftime("%Y-%m-%d %H:%M:%S")
     try:
         store_jti(user.id, jti, expires_at_str)
-        user_agent = request.headers.get('User-Agent', '')
-        ip_address = request.remote_addr or ''
+        user_agent = request.headers.get("User-Agent", "")
+        ip_address = request.remote_addr or ""
         create_session(user.id, jti, user_agent, ip_address, expires_at)
     except Exception as e:
         print("Session logging error: ", e)
@@ -312,7 +312,7 @@ def logout():
         return jsonify({"error": "Invalid token"}), 400
     affected = revoke_jti(jti)
     session_revoked = revoke_session(jti)
-    resp = jsonify({'revoked': bool(affected and session_revoked)})
+    resp = jsonify({"revoked": bool(affected and session_revoked)})
     unset_refresh_cookies(resp)
     return resp, 200 if affected and session_revoked else 400
 

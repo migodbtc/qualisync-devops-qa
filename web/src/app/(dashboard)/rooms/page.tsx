@@ -1,6 +1,3 @@
-import { redirect } from "next/navigation";
-import React from "react";
-
 import { Lock, HelpCircle } from "lucide-react";
 
 type Room = {

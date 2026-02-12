@@ -1,5 +1,5 @@
 "use client";
-import { Mail, Lock, User } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -42,8 +42,6 @@ export default function RegisterPage() {
         return;
       }
 
-      const savedEmail = email;
-      const savedPassword = password;
 
       setEmail("");
       setPassword("");
@@ -76,9 +74,11 @@ export default function RegisterPage() {
 
         router.replace("/home");
       } catch (err) {
+        console.log("Login post-registration error: ", err)
         setError("Login post-registration error");
       }
     } catch (err) {
+      console.log("Network error: ", err)
       setError("Network error");
     } finally {
       setLoading(false);

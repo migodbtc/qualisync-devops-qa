@@ -4,8 +4,6 @@ interface AuthSplitLayoutProps {
   children: React.ReactNode;
 }
 
-const SYSTEM_NAME = "Thicket: Apartment Tenant Management System";
-
 export default function AuthSplitLayout({ children }: AuthSplitLayoutProps) {
   return (
     <div className='min-h-screen flex flex-row bg-gray-50'>

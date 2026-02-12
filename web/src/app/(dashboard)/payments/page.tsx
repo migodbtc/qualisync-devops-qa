@@ -1,13 +1,10 @@
 import React from "react";
 import {
-  Users,
   CreditCard,
   CalendarCheck,
   AlertCircle,
   Search,
-  Filter,
-  ChevronDown,
-  Home,
+  Filter
 } from "lucide-react";
 
 const paymentSummary = [
