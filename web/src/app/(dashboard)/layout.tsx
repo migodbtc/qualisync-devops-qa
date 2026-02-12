@@ -102,7 +102,6 @@ export default function DashboardLayout({
       }
     }
     fetchSession();
-     
   }, [router]);
   // Sidebar nav items based on dashboard_features.md
   const navItems = [

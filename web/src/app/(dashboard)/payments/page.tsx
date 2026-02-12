@@ -4,7 +4,7 @@ import {
   CalendarCheck,
   AlertCircle,
   Search,
-  Filter
+  Filter,
 } from "lucide-react";
 
 const paymentSummary = [

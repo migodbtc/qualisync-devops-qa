@@ -42,7 +42,6 @@ export default function RegisterPage() {
         return;
       }
 
-
       setEmail("");
       setPassword("");
       setConfirmPassword("");
@@ -74,11 +73,11 @@ export default function RegisterPage() {
 
         router.replace("/home");
       } catch (err) {
-        console.log("Login post-registration error: ", err)
+        console.log("Login post-registration error: ", err);
         setError("Login post-registration error");
       }
     } catch (err) {
-      console.log("Network error: ", err)
+      console.log("Network error: ", err);
       setError("Network error");
     } finally {
       setLoading(false);

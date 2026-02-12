@@ -33,7 +33,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       setError("Network error");
-      console.log("Network error: " + err)
+      console.log("Network error: " + err);
     } finally {
       setLoading(false);
     }
@@ -101,9 +101,7 @@ export default function LoginPage() {
           {loading ? "Logging in..." : "Login"}
         </button>
         {error && (
-          <div className='text-xs text-red-600 mt-2 font-semibold'>
-            {error}
-          </div>
+          <div className='text-xs text-red-600 mt-2 font-semibold'>{error}</div>
         )}
         <div className='text-xs mt-2'>
           <a href='/register' className='text-gray-600 italic hover:underline'>
