@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Edit3, Key, LogOut, Download, Monitor } from "lucide-react";
+import { getCookie } from "../layout";
 
 export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
@@ -14,17 +15,32 @@ export default function ProfilePage() {
     setLoading(true);
     setError("");
     try {
+      console.log("Fetching endpoint: " + API_URL + "/auth/logout")
+      
+      const csrfToken = getCookie("csrf_refresh_token");
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (csrfToken) {
+        headers["X-CSRF-TOKEN"] = csrfToken;
+      }
+
       const res = await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers,
       });
+      
+      const data = await res.json()
+
       if (!res.ok) {
         setError("Logout failed");
+        console.log(data)
         setLoading(false);
         return;
       }
-      localStorage.removeItem("access_token");
+
+      localStorage.removeItem("refresh_token_cookie");
       router.push("/login");
     } catch (err) {
       setError("Network error");

@@ -17,7 +17,6 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    console.log("Login attempt", { email, password });
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -31,7 +30,6 @@ export default function LoginPage() {
       if (!res.ok) {
         setError(data.error || "Login failed");
       } else {
-        console.log("Access Token: " + data.access_token)
         localStorage.setItem("access_token", data.access_token);
         router.replace('/home')
       }

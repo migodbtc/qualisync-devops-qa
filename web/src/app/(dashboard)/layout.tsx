@@ -35,6 +35,15 @@ export function useSidebar() {
   return useContext(SidebarContext);
 }
 
+export const getCookie = (name: string) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2 && parts[1]) {
+    return parts[1].split(';').shift();
+  }
+  return null;
+}
+
 export default function DashboardLayout({
   children,
 }: {
@@ -48,16 +57,10 @@ export default function DashboardLayout({
 
   React.useEffect(() => {
     async function fetchSession() {
-      const DEBUG = false
       setSessionLoading(true);
       setSessionError(null);
       try {
         const apiUrl = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
-
-        if (DEBUG) {
-          const res = await fetch(`${apiUrl}/debug/cookies`)
-          return 
-        }
 
         const res = await fetch(`${apiUrl}/auth/session`, {
           method: "GET",

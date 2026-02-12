@@ -8,7 +8,7 @@ from sqlalchemy import Column, DateTime, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime, timedelta
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt, decode_token
+    JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt, decode_token, set_refresh_cookies, unset_refresh_cookies
 )
 
 engine = create_engine("mysql+pymysql://root:@localhost/fuchsia_atms_db")
@@ -220,6 +220,7 @@ def login():
     additional_claims = {'role': role_obj.name if role_obj else 'tenant', 'email': user.email}
     access_token = create_access_token(identity=identity, additional_claims=additional_claims)
     refresh_token = create_refresh_token(identity=identity)
+    print("Refresh Token: ", refresh_token)
     decoded = decode_token(refresh_token)
     jti = decoded.get('jti')
     exp = decoded.get('exp')
@@ -230,10 +231,7 @@ def login():
     except Exception:
         pass
     resp = make_response(jsonify({'access_token': access_token, 'token_type': 'bearer'}))
-    cookie_name = app.config.get('JWT_REFRESH_COOKIE_NAME', 'refresh_token_cookie')
-    secure_flag = app.config.get('JWT_COOKIE_SECURE', False)
-    samesite = app.config.get('JWT_COOKIE_SAMESITE', 'Lax')
-    resp.set_cookie(cookie_name, refresh_token, httponly=True, secure=secure_flag, samesite=samesite, expires=expires_at, path='/')
+    set_refresh_cookies(resp, refresh_token)
     return resp
 
 @app.route('/auth/refresh', methods=['POST'])
@@ -249,25 +247,22 @@ def logout():
     jwt_payload = get_jwt()
     jti = jwt_payload.get('jti')
     if not jti:
+        print("No JTI in JWT payload")
         return jsonify({'error': 'Invalid token'}), 400
     affected = revoke_jti(jti)
-    if affected:
-        return jsonify({'revoked': True})
-    return jsonify({'revoked': False}), 400
+    resp = jsonify({'revoked': bool(affected)})
+    unset_refresh_cookies(resp)
+    return resp, 200 if affected else 400
 
 @app.route('/auth/session', methods=['GET'])
 @jwt_required(refresh=True, locations=['cookies'])
 def session_info():
-    print("/auth/session called")
     identity = get_jwt_identity()
-    print(f"get_jwt_identity() returned: {identity}")
     user = session.query(AuthUser).filter_by(id=identity).first()
-    print(f"User lookup by id={identity}: {user}")
     if not user:
         print("No user found, returning 401")
         return jsonify({'authenticated': False}), 401
     role_obj = session.query(Role).filter_by(id=user.role_id).first()
-    print(f"Role lookup for user.role_id={user.role_id}: {role_obj}")
     resp = {
         'authenticated': True,
         'user': {
@@ -277,8 +272,12 @@ def session_info():
             'role': role_obj.name if role_obj else None,
         }
     }
-    print(f"Returning session info: {resp}")
     return jsonify(resp)
+
+@app.route('/test-jwt', methods=['POST'])
+@jwt_required(refresh=True, locations=['cookies'])
+def test_jwt():
+    return jsonify({"msg": "JWT accepted!"})
 
 @app.route("/debug/cookies")
 def debug_cookies():
