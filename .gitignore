@@ -2,3 +2,4 @@
 # Keep it short and simple (KISS)
 
 .venv
+node_modules
