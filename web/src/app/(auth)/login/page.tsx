@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect, useState } from "react";
 import { Mail, Lock } from "lucide-react";
@@ -12,7 +11,6 @@ export default function LoginPage() {
   const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
   const router = useRouter();
 
-
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -24,14 +22,14 @@ export default function LoginPage() {
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok) {
         setError(data.error || "Login failed");
       } else {
         localStorage.setItem("access_token", data.access_token);
-        router.replace('/home')
+        router.replace("/home");
       }
     } catch (err) {
       setError("Network error");
@@ -48,7 +46,10 @@ export default function LoginPage() {
       <span className='w-sm text-left text-xs text-gray-600 italic'>
         Sign in to access the full extent of the ATMS
       </span>
-      <form className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4' onSubmit={handleLogin}>
+      <form
+        className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4'
+        onSubmit={handleLogin}
+      >
         <div>
           <label
             htmlFor='email'

@@ -8,7 +8,15 @@ from sqlalchemy import Column, DateTime, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime, timedelta
 from flask_jwt_extended import (
-    JWTManager, create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt, decode_token, set_refresh_cookies, unset_refresh_cookies
+    JWTManager,
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt_identity,
+    get_jwt,
+    decode_token,
+    set_refresh_cookies,
+    unset_refresh_cookies,
 )
 
 engine = create_engine("mysql+pymysql://root:@localhost/fuchsia_atms_db")
@@ -20,6 +28,7 @@ def to_json(obj):
 
 
 # sqlalchemy
+
 
 # ORM Models mapped from migrations
 class Role(Base):
@@ -51,8 +60,12 @@ class Room(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_number = Column(String(10), unique=True, nullable=False)
     floor = Column(Integer)
-    type = Column(String(10), default="studio")  # ENUM('studio', '1BR', '2BR', '3BR', 'commercial')
-    status = Column(String(12), default="vacant")  # ENUM('vacant', 'occupied', 'maintenance')
+    type = Column(
+        String(10), default="studio"
+    )  # ENUM('studio', '1BR', '2BR', '3BR', 'commercial')
+    status = Column(
+        String(12), default="vacant"
+    )  # ENUM('vacant', 'occupied', 'maintenance')
     base_rent = Column(String(10))
 
 
@@ -76,8 +89,12 @@ class Payment(Base):
     amount_paid = Column(String(10), default="0.00")
     due_date = Column(DateTime, nullable=False)
     paid_date = Column(DateTime)
-    payment_type = Column(String(20))  # ENUM('cash', 'bank_transfer', 'credit_card', 'check')
-    status = Column(String(10), default="pending")  # ENUM('pending', 'partial', 'paid', 'overdue')
+    payment_type = Column(
+        String(20)
+    )  # ENUM('cash', 'bank_transfer', 'credit_card', 'check')
+    status = Column(
+        String(10), default="pending"
+    )  # ENUM('pending', 'partial', 'paid', 'overdue')
 
 
 class MaintenanceRequest(Base):
@@ -86,7 +103,9 @@ class MaintenanceRequest(Base):
     tenant_id = Column(Integer, nullable=False)
     room_id = Column(Integer, nullable=False)
     description = Column(String)
-    priority = Column(String(10), default="medium")  # ENUM('low', 'medium', 'high', 'emergency')
+    priority = Column(
+        String(10), default="medium"
+    )  # ENUM('low', 'medium', 'high', 'emergency')
     status = Column(String(15), default="open")  # ENUM('open', 'in progress', 'closed')
     request_date = Column(DateTime, default=datetime.now)
     resolved_date = Column(DateTime)
@@ -125,8 +144,10 @@ class JWTBlacklist(Base):
 
 Base.metadata.create_all(engine)
 
-Session = sessionmaker(bind=engine)
-session = Session()
+
+# Avoid naming conflict: use SessionLocal for factory, db for instance
+SessionLocal = sessionmaker(bind=engine)
+db = SessionLocal()
 
 # flask app + configs
 
@@ -145,144 +166,176 @@ jwt = JWTManager(app)
 
 # --- Token/JWT Helper Functions ---
 
+
 def hash_password(password):
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
 
 def verify_password(hashed, password):
     return bcrypt.checkpw(password.encode("utf-8"), hashed.encode("utf-8"))
 
+
 # --- Token Storage (Refresh Token JTI) ---
 def store_jti(user_id, jti, expires_at_str):
     # Store refresh token JTI in DB
-    token = RefreshToken(user_id=user_id, token=jti, expires_at=datetime.strptime(expires_at_str, "%Y-%m-%d %H:%M:%S"))
-    session.add(token)
-    session.commit()
+    token = RefreshToken(
+        user_id=user_id,
+        token=jti,
+        expires_at=datetime.strptime(expires_at_str, "%Y-%m-%d %H:%M:%S"),
+    )
+    db.add(token)
+    db.commit()
+
 
 def revoke_jti(jti):
     # Revoke refresh token by JTI
-    token = session.query(RefreshToken).filter_by(token=jti).first()
+    token = db.query(RefreshToken).filter_by(token=jti).first()
     if token:
         token.revoked = 1
-        session.commit()
+        db.commit()
         return True
     return False
 
-def find_by_jti(jti):
-    return session.query(RefreshToken).filter_by(token=jti).first()
 
-@jwt.token_in_blocklist_loader
-def check_if_token_revoked(jwt_header, jwt_payload):
-    token_type = jwt_payload.get('type')
-    jti = jwt_payload.get('jti')
-    if token_type != 'refresh' or not jti:
-        return False
-    row = find_by_jti(jti)
-    if not row:
+def find_by_jti(jti):
+    return db.query(RefreshToken).filter_by(token=jti).first()
+
+def create_session(user_id, session_id, user_agent, ip_address, expires_at):
+    new_session = Session(
+        user_id=user_id,
+        session_id=session_id,
+        user_agent=user_agent,
+        ip_address=ip_address,
+        created_at=datetime.now(),
+        expires_at=expires_at,
+        revoked=0
+    )
+    db.add(new_session)
+    db.commit()
+    return new_session
+
+def revoke_session(session_id):
+    sess = db.query(Session).filter_by(session_id=session_id, revoked=0).first()
+    if sess:
+        sess.revoked = 1
+        db.commit()
         return True
-    return bool(row.revoked)
+    return False
+
 
 # --- AUTH ROUTES ---
-@app.route('/auth/register', methods=['POST'])
+@app.route("/auth/register", methods=["POST"])
 def register():
     payload = request.get_json() or {}
-    email = payload.get('email')
-    password = payload.get('password')
-    role = payload.get('role', 'tenant')
-    username = payload.get('username') or email
+    email = payload.get("email")
+    password = payload.get("password")
+    role = payload.get("role", "tenant")
+    username = payload.get("username") or email
     if not email or not password:
-        return jsonify({'error': 'email and password are required'}), 400
-    if role not in ('tenant', 'admin', 'staff'):
-        return jsonify({'error': 'invalid role'}), 400
-    existing = session.query(AuthUser).filter_by(email=email).first()
+        return jsonify({"error": "email and password are required"}), 400
+    if role not in ("tenant", "admin", "staff"):
+        return jsonify({"error": "invalid role"}), 400
+    existing = db.query(AuthUser).filter_by(email=email).first()
     if existing:
-        return jsonify({'error': 'user already exists'}), 400
+        return jsonify({"error": "user already exists"}), 400
     pw_hash = hash_password(password)
-    role_obj = session.query(Role).filter_by(name=role).first()
+    role_obj = db.query(Role).filter_by(name=role).first()
     role_id = role_obj.id if role_obj else 1
-    user = AuthUser(username=username, email=email, password_hash=pw_hash, role_id=role_id, created_at=datetime.now())
-    session.add(user)
-    session.commit()
-    return jsonify({'id': user.id}), 201
+    user = AuthUser(
+        username=username,
+        email=email,
+        password_hash=pw_hash,
+        role_id=role_id,
+        created_at=datetime.now(),
+    )
+    db.add(user)
+    db.commit()
+    return jsonify({"id": user.id}), 201
 
-@app.route('/auth/login', methods=['POST'])
+
+@app.route("/auth/login", methods=["POST"])
 def login():
     payload = request.get_json() or {}
-    email = payload.get('email')
-    password = payload.get('password')
+    email = payload.get("email")
+    password = payload.get("password")
     if not email or not password:
-        return jsonify({'error': 'email and password are required'}), 400
-    user = session.query(AuthUser).filter_by(email=email).first()
+        return jsonify({"error": "email and password are required"}), 400
+    user = db.query(AuthUser).filter_by(email=email).first()
     if not user or not verify_password(user.password_hash, password):
-        return jsonify({'error': 'invalid credentials'}), 401
+        return jsonify({"error": "invalid credentials"}), 401
     identity = str(user.id)
     # Add role and email as claims
-    role_obj = session.query(Role).filter_by(id=user.role_id).first()
-    additional_claims = {'role': role_obj.name if role_obj else 'tenant', 'email': user.email}
-    access_token = create_access_token(identity=identity, additional_claims=additional_claims)
+    role_obj = db.query(Role).filter_by(id=user.role_id).first()
+    additional_claims = {
+        "role": role_obj.name if role_obj else "tenant",
+        "email": user.email,
+    }
+    access_token = create_access_token(
+        identity=identity, additional_claims=additional_claims
+    )
     refresh_token = create_refresh_token(identity=identity)
-    print("Refresh Token: ", refresh_token)
     decoded = decode_token(refresh_token)
-    jti = decoded.get('jti')
-    exp = decoded.get('exp')
+    jti = decoded.get("jti")
+    exp = decoded.get("exp")
     expires_at = datetime.fromtimestamp(exp, timezone.utc)
-    expires_at_str = expires_at.strftime('%Y-%m-%d %H:%M:%S')
+    expires_at_str = expires_at.strftime("%Y-%m-%d %H:%M:%S")
     try:
         store_jti(user.id, jti, expires_at_str)
-    except Exception:
-        pass
-    resp = make_response(jsonify({'access_token': access_token, 'token_type': 'bearer'}))
+        user_agent = request.headers.get('User-Agent', '')
+        ip_address = request.remote_addr or ''
+        create_session(user.id, jti, user_agent, ip_address, expires_at)
+    except Exception as e:
+        print("Session logging error: ", e)
+    resp = make_response(
+        jsonify({"access_token": access_token, "token_type": "bearer"})
+    )
     set_refresh_cookies(resp, refresh_token)
+
     return resp
 
-@app.route('/auth/refresh', methods=['POST'])
-@jwt_required(refresh=True, locations=['cookies'])
+
+@app.route("/auth/refresh", methods=["POST"])
+@jwt_required(refresh=True, locations=["cookies"])
 def refresh():
     identity = get_jwt_identity()
     new_access = create_access_token(identity=identity)
-    return jsonify({'access_token': new_access})
+    return jsonify({"access_token": new_access})
 
-@app.route('/auth/logout', methods=['POST'])
-@jwt_required(refresh=True, locations=['cookies'])
+
+@app.route("/auth/logout", methods=["POST"])
+@jwt_required(refresh=True, locations=["cookies"])
 def logout():
     jwt_payload = get_jwt()
-    jti = jwt_payload.get('jti')
+    jti = jwt_payload.get("jti")
     if not jti:
         print("No JTI in JWT payload")
-        return jsonify({'error': 'Invalid token'}), 400
+        return jsonify({"error": "Invalid token"}), 400
     affected = revoke_jti(jti)
-    resp = jsonify({'revoked': bool(affected)})
+    session_revoked = revoke_session(jti)
+    resp = jsonify({'revoked': bool(affected and session_revoked)})
     unset_refresh_cookies(resp)
-    return resp, 200 if affected else 400
+    return resp, 200 if affected and session_revoked else 400
 
-@app.route('/auth/session', methods=['GET'])
-@jwt_required(refresh=True, locations=['cookies'])
+
+@app.route("/auth/session", methods=["GET"])
+@jwt_required(refresh=True, locations=["cookies"])
 def session_info():
     identity = get_jwt_identity()
-    user = session.query(AuthUser).filter_by(id=identity).first()
+    user = db.query(AuthUser).filter_by(id=identity).first()
     if not user:
         print("No user found, returning 401")
-        return jsonify({'authenticated': False}), 401
-    role_obj = session.query(Role).filter_by(id=user.role_id).first()
+        return jsonify({"authenticated": False}), 401
+    role_obj = db.query(Role).filter_by(id=user.role_id).first()
     resp = {
-        'authenticated': True,
-        'user': {
-            'id': user.id,
-            'email': user.email,
-            'username': user.username,
-            'role': role_obj.name if role_obj else None,
-        }
+        "authenticated": True,
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+            "role": role_obj.name if role_obj else None,
+        },
     }
     return jsonify(resp)
-
-@app.route('/test-jwt', methods=['POST'])
-@jwt_required(refresh=True, locations=['cookies'])
-def test_jwt():
-    return jsonify({"msg": "JWT accepted!"})
-
-@app.route("/debug/cookies")
-def debug_cookies():
-    print("Cookies received:", request.cookies)
-    return jsonify({k: v for k, v in request.cookies.items()})
 
 
 if __name__ == "__main__":

@@ -39,7 +39,7 @@ export default function RegisterPage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Registration failed");
-        return 
+        return;
       }
 
       const savedEmail = email;
@@ -58,26 +58,26 @@ export default function RegisterPage() {
       try {
         const loginRes = await fetch(`${API_URL}/auth/login`, {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
-          credentials: "include", 
-          body: JSON.stringify({email, password}),
-        })
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        });
 
         const loginData = await loginRes.json();
 
         if (!loginRes.ok) {
-          setError(loginData.error || "Attempted login post-registration failed!");
-          return
+          setError(
+            loginData.error || "Attempted login post-registration failed!",
+          );
+          return;
         }
 
         localStorage.setItem("access_token", loginData.access_token);
 
-        router.replace('/home')
+        router.replace("/home");
       } catch (err) {
-        setError("Login post-registration error")
+        setError("Login post-registration error");
       }
-      
-      
     } catch (err) {
       setError("Network error");
     } finally {
@@ -93,7 +93,10 @@ export default function RegisterPage() {
         Create your account to access the ATMS. Personal information can be
         edited once account has been approved.
       </span>
-      <form className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4' onSubmit={handleSubmit}>
+      <form
+        className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4'
+        onSubmit={handleSubmit}
+      >
         <div>
           <label
             htmlFor='email'
@@ -162,21 +165,37 @@ export default function RegisterPage() {
             <input
               type='checkbox'
               checked={agreedTnC}
-              onChange={e => setAgreedTnC(e.target.checked)}
+              onChange={(e) => setAgreedTnC(e.target.checked)}
               className='accent-fuchsia-600 rounded border-gray-300'
               required
             />
-            I agree to the <a href='/terms' className='underline text-fuchsia-600' target='_blank' rel='noopener noreferrer'>Terms &amp; Conditions</a>
+            I agree to the{" "}
+            <a
+              href='/terms'
+              className='underline text-fuchsia-600'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Terms &amp; Conditions
+            </a>
           </label>
           <label className='flex items-center gap-2 text-xs text-gray-700'>
             <input
               type='checkbox'
               checked={agreedPrivacy}
-              onChange={e => setAgreedPrivacy(e.target.checked)}
+              onChange={(e) => setAgreedPrivacy(e.target.checked)}
               className='accent-fuchsia-600 rounded border-gray-300'
               required
             />
-            I agree to the <a href='/privacy' className='underline text-fuchsia-600' target='_blank' rel='noopener noreferrer'>Data Privacy Policy</a>
+            I agree to the{" "}
+            <a
+              href='/privacy'
+              className='underline text-fuchsia-600'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Data Privacy Policy
+            </a>
           </label>
         </div>
         {error && <div className='text-red-500 text-xs'>{error}</div>}

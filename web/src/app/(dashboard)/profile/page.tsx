@@ -1,4 +1,3 @@
-
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,8 +14,8 @@ export default function ProfilePage() {
     setLoading(true);
     setError("");
     try {
-      console.log("Fetching endpoint: " + API_URL + "/auth/logout")
-      
+      console.log("Fetching endpoint: " + API_URL + "/auth/logout");
+
       const csrfToken = getCookie("csrf_refresh_token");
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -30,12 +29,12 @@ export default function ProfilePage() {
         credentials: "include",
         headers,
       });
-      
-      const data = await res.json()
+
+      const data = await res.json();
 
       if (!res.ok) {
         setError("Logout failed");
-        console.log(data)
+        console.log(data);
         setLoading(false);
         return;
       }

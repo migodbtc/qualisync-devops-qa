@@ -21,7 +21,13 @@ redo the web application within the system to create more complex situations to 
 - complete ui/ux interaction 
 
 - implement backend routes connecting to mysql
-  - implement custom joins such as two table joins, three table joins depending on the feature page
+
+- implement authorization and RBAC using JWT tokenization
+- add session logging for hybrid JWT architecture
+- complete the authentication feature of the web app
+- lint and format the web app and server
+
+- implement custom joins such as two table joins, three table joins depending on the feature page
 
 - defragment and optimize nextjs project using prettier then eslint then prettier again (post-eslint)
 - defragment and optimize flaskapi server using black then flake8 then black again (post-flake, or inverse, as long as formatting -> logic check -> formatting again)

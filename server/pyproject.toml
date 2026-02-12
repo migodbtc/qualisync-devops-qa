@@ -22,4 +22,4 @@ per-file-ignores = [
 ]
 max-line-length = 88
 count = true
-exclude = ["venv*", ".venv*", "db*", "pycache*"]
+exclude = ["venv*", ".venv*", "db*", "pycache*", "temp*"]
