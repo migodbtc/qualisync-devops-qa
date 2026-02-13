@@ -4,9 +4,11 @@
 - learn about e2e testing in the context of next.js applications
 - install vitest for u&i testing on nextjs (`pnpm add -D vitest ./filter web`)
   - install `@testing-library/react`, `@testing-library/jest-dom`, and `js-dom` as vitest dependencies
-  - generate vitest config (`pnpm exec vitest config init`)
-- install playwright for integration on nextjs `pnpm add -D playwright --filter ./web`
-- install pytest for unit testing on flask api
+  - generate vitest config and setup mock dom file (`setup.ts`)
+  - generate sanity check test under `unit/`
+- install playwright for integration on nextjs `pnpm add -D @playwright/test --filter ./web`
+  - generate sanity check test under `e2e/`
+- install pytest for unit testing on flask api 
 - install flask test client (FTC) for integration testing on flask api
 - install requests (library) for e2e testing for flask api
 - use markdown files for manual code review for both flask & nextjs
