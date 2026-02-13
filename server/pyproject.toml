@@ -2,6 +2,13 @@
 name = "qualisync-flask-api"
 description = "Basically the Flask API used for Qualisync project by Migo for learning DevOps, automation, quality assurance, linting, etc"
 
+[tool.pytest]
+minversion = "9.0"
+addopts = ["-ra", "-q"]
+testpaths = [
+    "tests/unit/**",
+]
+
 [tool.black]
 line-length = 88
 exclude = '''

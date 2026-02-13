@@ -8,9 +8,10 @@
   - generate sanity check test under `unit/`
 - install playwright for integration on nextjs `pnpm add -D @playwright/test --filter ./web`
   - generate sanity check test under `e2e/`
-- install pytest for unit testing on flask api 
-- install flask test client (FTC) for integration testing on flask api
-- install requests (library) for e2e testing for flask api
+- install pytest for unit testing on flask api `pip install pytest`
+- install flask test client (FTC) for integration testing on flask api (preinstalled with Flask)
+- install requests (library) for e2e testing for flask api `pip install requests`
+- mandatory freeze 
 - use markdown files for manual code review for both flask & nextjs
   - create a viable copy-pastable format that can be used for code reviews
   - automate using a script or something so that u dont have to copy paste, modify file name, manually put in date & time, etc
