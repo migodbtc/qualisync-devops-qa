@@ -2,4 +2,5 @@
 # Keep it short and simple (KISS)
 
 .venv
+.pytest_cache
 node_modules
