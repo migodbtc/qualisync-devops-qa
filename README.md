@@ -32,7 +32,7 @@ With a background rooted in *software development*, I have spent the past **four
 
 This project reflects the *evolving demands* of the industry: developers are now expected to understand not only how to build software, but also how to **manage infrastructure**, **automate processes**, **ensure quality**, and support **continuous integration and delivery (CI/CD)**. Although this project may not encompass every technology or aspect of large-scale industry experience, it is designed to expand my skills beyond development—*deepening my understanding* of software engineering as a whole and preparing me for the challenges of modern IT.
 
-## 🏢 Fuchsia – Qualisync’s Fictional ATMS Web Application
+## 🏢 Thicket ATMS for Fuchsia - Qualisync's Fictional Beneficiary 
 
 To fully leverage **version control**, **quality assurance**, **Docker containerization**, and other modern IT practices, this project includes a *(continuously evolving)* web application that serves as both the main client-facing product and a foundation for operational experimentation. **Fuchsia** addresses this need—a web application designed for a *fictional apartment-tenant management system*, inspired by my previous academic and personal projects.
 
