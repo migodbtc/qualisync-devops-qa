@@ -222,6 +222,9 @@ def revoke_session(session_id):
         return True
     return False
 
+@app.route("/")
+def index():
+    return jsonify({"message": "API up and running!"}), 200
 
 # --- AUTH ROUTES ---
 @app.route("/auth/register", methods=["POST"])

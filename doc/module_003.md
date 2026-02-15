@@ -11,7 +11,7 @@
 - install pytest for unit testing on flask api `pip install pytest`
 - install flask test client (FTC) for integration testing on flask api (preinstalled with Flask)
 - install requests (library) for e2e testing for flask api `pip install requests`
-- mandatory freeze 
+- mandatory freeze `pip freeze > requirements.txt`
 - use markdown files for manual code review for both flask & nextjs
   - create a viable copy-pastable format that can be used for code reviews
   - automate using a script or something so that u dont have to copy paste, modify file name, manually put in date & time, etc

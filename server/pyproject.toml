@@ -7,7 +7,7 @@ authors = [{ name = "Migo Gennesaret", email = "migueljustin.bunda@proton.me" }]
 [tool.pytest]
 minversion = "9.0"
 addopts = ["-ra", "-q"]
-testpaths = ["tests/unit/**"]
+testpaths = ["tests/unit/**", "tests/integration/**"]
 
 [tool.black]
 line-length = 88
