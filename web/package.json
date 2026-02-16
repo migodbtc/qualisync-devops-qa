@@ -10,7 +10,7 @@
     "lint:fix": "pnpm exec eslint . --fix && echo Linting and auto-fixing complete! No remaining problems identified.",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test:unit": "vitest",
+    "test:component": "vitest",
     "test:e2e": "playwright test"
   },
   "dependencies": {

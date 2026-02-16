@@ -4,14 +4,14 @@
 
 | #  | Component | Path | Type of Path | Test Scenario | Description |
 |----|-----------|------|--------------|---------------|-------------|
-| 1  | RootLayout | /    | 🟢 Happy Path | Root layout happy path | Renders children properly and applies the correct font classes. |
+| 1  | RootLayout | /    | 🟢 Happy Path | Root layout happy path | Renders children and correct font classes. |
 | 2  | RootLayout | /    | 🔴 Sad Path   | Root layout sad path (no children) | Renders nothing if children are missing. |
 | 3  | RootLayout | /    | 🔴 Sad Path   | Root layout sad path (invalid font) | Handles an invalid font name gracefully. |
-| 4  | HomePage   | /    | 🟢 Happy Path | Root page happy path | Successfully redirects to the intended route. |
+| 4  | HomePage   | /    | 🟢 Happy Path | Root page happy path | Renders and redirects to intended route. |
 | 5  | HomePage   | /    | 🔴 Sad Path   | Root page sad path | Handles unsuccessful redirect attempts appropriately. |
-| 6  | AuthLayout | /auth | 🟢 Happy Path | (auth)/layout happy path | Renders children and displays the split layout with title and subtitle. |
+| 6  | AuthLayout | /auth | 🟢 Happy Path | (auth)/layout happy path | Renders children, split layout, and title. |
 | 7  | AuthLayout | /auth | 🔴 Sad Path   | (auth)/layout sad path | Handles errors when rendering children. |
-| 8  | LoginPage  | /auth/login | 🟢 Happy Path | (auth)/login/page.tsx happy path | Renders the login form with all expected fields and labels, allows the user to enter a valid email and password, submits the form and triggers the API call with the correct payload, displays a loading state while waiting for the response, stores the access token in localStorage upon successful login, redirects the user to the /home page after successful login, does not display an error message for valid credentials, disables the "Login" button during loading, and ensures the "Register" link is visible and navigable. |
+| 8  | LoginPage  | /auth/login | 🟢 Happy Path | (auth)/login/page.tsx happy path | Renders all fields, submits valid credentials, redirects to /home. |
 | 9  | LoginPage  | /auth/login | 🔴 Sad Path   | (auth)/login/page.tsx sad path (fields/labels) | Renders the form with missing or incorrect fields and labels. |
 | 10 | LoginPage  | /auth/login | 🔴 Sad Path   | (auth)/login/page.tsx sad path (invalid credentials) | Shows an error when the user enters an invalid email or password. |
 | 11 | LoginPage  | /auth/login | 🔴 Sad Path   | (auth)/login/page.tsx sad path (API fail/payload) | Handles form submission when the API call fails or the payload is incorrect. |
@@ -21,20 +21,18 @@
 | 15 | LoginPage  | /auth/login | 🔴 Sad Path   | (auth)/login/page.tsx sad path (error for valid) | Displays an error message even for valid credentials. |
 | 16 | LoginPage  | /auth/login | 🔴 Sad Path   | (auth)/login/page.tsx sad path (button) | Does not disable the "Login" button during loading. |
 | 17 | LoginPage  | /auth/login | 🔴 Sad Path   | (auth)/login/page.tsx sad path (register link) | The "Register" link is missing or not navigable. |
-| 18 | RegisterPage | /auth/register | 🟢 Happy Path | (auth)/register/page.tsx happy path | Renders the registration form with all expected fields, labels, and checkboxes; allows the user to enter a valid email, username, password, and confirm password; allows the user to select a role; requires the user to check both compliance checkboxes (Terms & Conditions, Privacy Policy); submits the form and triggers the API call with the correct payload; displays a loading state while waiting for the response; clears the form fields and checkboxes upon successful registration; automatically logs in the user after registration; stores the access token in localStorage upon successful auto-login; redirects the user to the /home page after successful registration and login; does not display an error message for valid input and successful registration; disables the "Register" button during loading; and ensures the "Login" link is visible and navigable. |
+| 18 | RegisterPage | /auth/register | 🟢 Happy Path | (auth)/register/page.tsx happy path | Renders all fields and checkboxes, submits valid data, auto-logs in and redirects to /home. |
 | 19 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (fields/labels/checkboxes) | Renders the form with missing or incorrect fields, labels, or checkboxes. |
 | 20 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (invalid input) | Does not allow the user to enter a valid email, username, password, or confirm password. |
 | 21 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (role) | Does not allow the user to select a role. |
-| 22 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (compliance) | Does not require the user to check both compliance checkboxes, or allows submission without them. |
+| 22 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (compliance) | Requires the user to check both compliance checkboxes |
 | 23 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (API fail/payload) | Submits the form but triggers the API call with an incorrect payload, or the API call fails. |
 | 24 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (loading) | Does not display a loading state, or gets stuck in the loading state. |
-| 25 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (clear fields) | Does not clear the form fields and checkboxes upon successful registration. |
 | 26 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (auto-login) | Does not automatically log in the user after registration. |
 | 27 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (no token) | Does not store the access token in localStorage upon successful auto-login. |
 | 28 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (no redirect) | Does not redirect the user to the /home page after successful registration and login. |
-| 29 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (error for valid) | Displays an error message for valid input and successful registration. |
+| 29 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (error for valid) | Shows an error message when registration should succeed. |
 | 30 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (button) | Does not disable the "Register" button during loading. |
-| 31 | RegisterPage | /auth/register | 🔴 Sad Path   | (auth)/register/page.tsx sad path (login link) | The "Login" link is missing or not navigable. |
 
 ## 🎭 Playwright (E2E Tests, Frontend)
 

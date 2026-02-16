@@ -36,14 +36,14 @@
 ## Phase 3: CI/CD Integration
 *Goal: Ensure ESLint runs in the pipeline for every push/PR.*
 
-- [ ] **Update GitHub Actions Workflow**
-    - [ ] Add a step to run ESLint in the frontend quality job.
-    - [ ] Make the pipeline fail if lint errors are found.
+- [X] **Update GitHub Actions Workflow**
+    - [X] Add a step to run ESLint in the frontend quality job.
+    - [X] Make the pipeline fail if lint errors are found.
 
 ---
 
 ## Phase 4: Project Finish
-- [ ] Module complete
+- [X] Module complete
 
 ## 📝 Notes
 *   **ESLint:** Checks code for errors, best practices, and style issues beyond formatting.
