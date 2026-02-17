@@ -62,8 +62,9 @@ export default function LoginPage() {
             <Mail className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='email'
-              id='email'
+              id='login-email'
               name='email'
+              data-testid='login-email'
               required
               placeholder='Enter your email'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -83,8 +84,9 @@ export default function LoginPage() {
             <Lock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='password'
-              id='password'
+              id='login-password'
               name='password'
+              data-testid='login-password'
               required
               placeholder='Enter your password'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -95,6 +97,8 @@ export default function LoginPage() {
         </div>
         <button
           type='submit'
+          id='login-submit'
+          data-testid='login-submit'
           className='bg-fuchsia-600 text-white font-semibold py-2 mt-4 rounded-md hover:bg-fuchsia-700 transition cursor-pointer'
           disabled={loading}
         >

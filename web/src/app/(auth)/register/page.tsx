@@ -107,8 +107,9 @@ export default function RegisterPage() {
             <Mail className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='email'
-              id='email'
+              id='register-email'
               name='email'
+              data-testid='register-email'
               required
               placeholder='Enter your email'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -128,8 +129,9 @@ export default function RegisterPage() {
             <Lock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='password'
-              id='password'
+              id='register-password'
               name='password'
+              data-testid='register-password'
               required
               placeholder='Enter your password'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -149,8 +151,9 @@ export default function RegisterPage() {
             <Lock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='password'
-              id='confirmPassword'
+              id='register-confirm-password'
               name='confirmPassword'
+              data-testid='register-confirm-password'
               required
               placeholder='Re-enter your password'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -163,6 +166,8 @@ export default function RegisterPage() {
           <label className='flex items-center gap-2 text-xs text-gray-700'>
             <input
               type='checkbox'
+              id='register-tnc'
+              data-testid='register-tnc'
               checked={agreedTnC}
               onChange={(e) => setAgreedTnC(e.target.checked)}
               className='accent-fuchsia-600 rounded border-gray-300'
@@ -181,6 +186,8 @@ export default function RegisterPage() {
           <label className='flex items-center gap-2 text-xs text-gray-700'>
             <input
               type='checkbox'
+              id='register-privacy'
+              data-testid='register-privacy'
               checked={agreedPrivacy}
               onChange={(e) => setAgreedPrivacy(e.target.checked)}
               className='accent-fuchsia-600 rounded border-gray-300'
@@ -201,6 +208,8 @@ export default function RegisterPage() {
         {success && <div className='text-green-600 text-xs'>{success}</div>}
         <button
           type='submit'
+          id='register-submit'
+          data-testid='register-submit'
           className='bg-fuchsia-600 text-white font-semibold py-2 mt-4 rounded-md hover:bg-fuchsia-700 transition cursor-pointer'
           disabled={loading}
         >
