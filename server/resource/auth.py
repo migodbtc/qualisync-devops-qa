@@ -21,7 +21,6 @@ def verify_password(hashed, password):
     return bcrypt.checkpw(password.encode("utf-8"), hashed.encode("utf-8"))
 
 def store_jti(user_id, jti, expires_at_str):
-    # Store refresh token JTI in DB
     token = RefreshToken(
         user_id=user_id,
         token=jti,
@@ -32,7 +31,6 @@ def store_jti(user_id, jti, expires_at_str):
 
 
 def revoke_jti(jti):
-    # Revoke refresh token by JTI
     token = db.query(RefreshToken).filter_by(token=jti).first()
     if token:
         token.revoked = 1
@@ -68,20 +66,47 @@ def revoke_session(session_id):
         return True
     return False
 
+def unpack_register_payload(payload):
+    email = payload.get("email")
+    password = payload.get("password")
+    username = payload.get("username") or email
+    role = payload.get("role", "tenant")
+    return email, password, username, role
+
+def unpack_login_payload(payload):
+    email = payload.get("email")
+    password = payload.get("password")
+    return email, password
+
+def validate_register(email, password, role):
+    errors = []
+    if not email or not password:
+        errors.append("email and password are required")
+    if role not in ("tenant", "admin", "staff"):
+        errors.append("invalid role")
+    return errors
+
+def validate_login(email, password):
+    errors = []
+    if not email or not password:
+        errors.append("email and password are required")
+    return errors
+
+
 @auth_blueprint.route("/register", methods=["POST"])
 def register():
     payload = request.get_json() or {}
-    email = payload.get("email")
-    password = payload.get("password")
-    role = payload.get("role", "tenant")
-    username = payload.get("username") or email
-    if not email or not password:
-        return jsonify({"error": "email and password are required"}), 400
-    if role not in ("tenant", "admin", "staff"):
-        return jsonify({"error": "invalid role"}), 400
+
+    email, password, username, role = unpack_register_payload(payload)
+    
+    errors = validate_register(email, password, role)
+    if errors:
+        return jsonify({"error": errors}), 400
+    
     existing = db.query(AuthUser).filter_by(email=email).first()
     if existing:
         return jsonify({"error": "user already exists"}), 400
+    
     pw_hash = hash_password(password)
     role_obj = db.query(Role).filter_by(name=role).first()
     role_id = role_obj.id if role_obj else 1
@@ -92,6 +117,7 @@ def register():
         role_id=role_id,
         created_at=datetime.now(),
     )
+
     db.add(user)
     db.commit()
     return jsonify({"id": user.id}), 201
@@ -100,15 +126,19 @@ def register():
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
     payload = request.get_json() or {}
-    email = payload.get("email")
-    password = payload.get("password")
-    if not email or not password:
-        return jsonify({"error": "email and password are required"}), 400
+
+    email, password = unpack_login_payload(payload)
+
+    errors = validate_login(email, password)
+    if errors:
+        return jsonify({"error": errors}), 400
+    
     user = db.query(AuthUser).filter_by(email=email).first()
     if not user or not verify_password(user.password_hash, password):
         return jsonify({"error": "invalid credentials"}), 401
+    
+
     identity = str(user.id)
-    # Add role and email as claims
     role_obj = db.query(Role).filter_by(id=user.role_id).first()
     additional_claims = {
         "role": role_obj.name if role_obj else "tenant",
@@ -123,6 +153,7 @@ def login():
     exp = decoded.get("exp")
     expires_at = datetime.fromtimestamp(exp, timezone.utc)
     expires_at_str = expires_at.strftime("%Y-%m-%d %H:%M:%S")
+
     try:
         store_jti(user.id, jti, expires_at_str)
         user_agent = request.headers.get("User-Agent", "")
@@ -150,14 +181,17 @@ def refresh():
 @jwt_required(refresh=True, locations=["cookies"])
 def logout():
     jwt_payload = get_jwt()
+
     jti = jwt_payload.get("jti")
     if not jti:
         print("No JTI in JWT payload")
         return jsonify({"error": "Invalid token"}), 400
+    
     affected = revoke_jti(jti)
     session_revoked = revoke_session(jti)
     resp = jsonify({"revoked": bool(affected and session_revoked)})
     unset_refresh_cookies(resp)
+
     return resp, 200 if affected and session_revoked else 400
 
 
@@ -165,10 +199,12 @@ def logout():
 @jwt_required(refresh=True, locations=["cookies"])
 def session_info():
     identity = get_jwt_identity()
+
     user = db.query(AuthUser).filter_by(id=identity).first()
     if not user:
         print("No user found, returning 401")
         return jsonify({"authenticated": False}), 401
+    
     role_obj = db.query(Role).filter_by(id=user.role_id).first()
     resp = {
         "authenticated": True,
