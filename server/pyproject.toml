@@ -4,11 +4,6 @@ version = "0.0.1a0"
 description = "[AI-GENERATED DESCRIPTION] Flask API backend for a two-service web application (Next.js frontend + Flask backend) managed by Docker Compose. Provides REST endpoints for authentication, user management, and apartment/tenant operations, using SQLAlchemy ORM and supporting DevOps, automation, and QA workflows."
 authors = [{ name = "Migo Gennesaret", email = "migueljustin.bunda@proton.me" }]
 
-[tool.pytest]
-minversion = "9.0"
-addopts = ["-ra", "-q"]
-testpaths = ["tests/unit/**", "tests/integration/**"]
-
 [tool.black]
 line-length = 88
 exclude = '''

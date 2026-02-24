@@ -3,12 +3,14 @@ from server.db.models import AuthUser
 from server.main import app
 from db.database import db
 
+
 # --- PyTest Fixtures ---
 @pytest.fixture
 def client():
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False
     with app.test_client() as client:
         yield client
+
 
 @pytest.fixture(autouse=True)
 def reset_db():
@@ -22,10 +24,12 @@ def reset_db():
     except Exception:
         pass
 
+
 # --- Test Helpers ---
 def get_next_user_number():
     # Query the current number of users in the database
     return db.query(AuthUser).count() + 1
+
 
 def register_user(client, role="tenant", password="securepass"):
     count = get_next_user_number()
@@ -35,15 +39,18 @@ def register_user(client, role="tenant", password="securepass"):
     print("User " + email + " created!!")
     return client.post("/auth/register", json=payload), email, username, password
 
+
 def login_user(client, email, password):
     payload = {"email": email, "password": password}
     return client.post("/auth/login", json=payload)
 
+
 # --- Test Endpoints ---
 def test_index_endpoint(client):
-    response = client.get('/')
+    response = client.get("/")
     assert response.status_code == 200
     assert response.json == {"message": "API running"}
+
 
 def test_register_endpoint(client):
     # --- Success: valid registration ---
@@ -53,30 +60,50 @@ def test_register_endpoint(client):
     assert "id" in response.json
 
     # --- Failure: duplicate email ---
-    response_dup = client.post("/auth/register", json={
-        "email": email, "password": password, "username": username, "role": "tenant"
-    })
+    response_dup = client.post(
+        "/auth/register",
+        json={
+            "email": email,
+            "password": password,
+            "username": username,
+            "role": "tenant",
+        },
+    )
     print("Duplicate email:", response_dup.status_code, response_dup.json)
     assert response_dup.status_code == 400
     assert "error" in response_dup.json
 
     # --- Failure: missing email ---
-    response_no_email = client.post("/auth/register", json={"password": "pw", "username": "u", "role": "tenant"})
+    response_no_email = client.post(
+        "/auth/register", json={"password": "pw", "username": "u", "role": "tenant"}
+    )
     print("Missing email:", response_no_email.status_code, response_no_email.json)
     assert response_no_email.status_code == 400
     assert "error" in response_no_email.json
 
     # --- Failure: missing password ---
-    response_no_pw = client.post("/auth/register", json={"email": "reg2@example.com", "username": "u", "role": "tenant"})
+    response_no_pw = client.post(
+        "/auth/register",
+        json={"email": "reg2@example.com", "username": "u", "role": "tenant"},
+    )
     print("Missing password:", response_no_pw.status_code, response_no_pw.json)
     assert response_no_pw.status_code == 400
     assert "error" in response_no_pw.json
 
     # --- Failure: invalid role ---
-    response_bad_role = client.post("/auth/register", json={"email": "reg3@example.com", "password": "pw", "username": "u", "role": "badrole"})
+    response_bad_role = client.post(
+        "/auth/register",
+        json={
+            "email": "reg3@example.com",
+            "password": "pw",
+            "username": "u",
+            "role": "badrole",
+        },
+    )
     print("Invalid role:", response_bad_role.status_code, response_bad_role.json)
     assert response_bad_role.status_code == 400
     assert "error" in response_bad_role.json
+
 
 def test_login_endpoint(client):
     _, email, username, password = register_user(client, password="pw123")
@@ -110,6 +137,7 @@ def test_login_endpoint(client):
     assert response_no_pw.status_code == 400
     assert "error" in response_no_pw.json
 
+
 def test_refresh_endpoint(client):
     _, email, username, password = register_user(client, password="pw123")
     login_resp = login_user(client, email, "pw123")
@@ -123,8 +151,13 @@ def test_refresh_endpoint(client):
     # --- Failure: no refresh token ---
     client.delete_cookie("refresh_token_cookie")
     response_no_cookie = client.post("/auth/refresh")
-    print("No refresh token:", response_no_cookie.status_code, response_no_cookie.get_json())
+    print(
+        "No refresh token:",
+        response_no_cookie.status_code,
+        response_no_cookie.get_json(),
+    )
     assert response_no_cookie.status_code in (401, 422)
+
 
 def test_logout_endpoint(client):
     # Arrange: register and login — test client stores the refresh cookie automatically
@@ -139,8 +172,13 @@ def test_logout_endpoint(client):
     # --- Failure: no refresh token ---
     client.delete_cookie("refresh_token_cookie")
     response_no_cookie = client.post("/auth/logout")
-    print("No refresh token (logout):", response_no_cookie.status_code, response_no_cookie.get_json())
+    print(
+        "No refresh token (logout):",
+        response_no_cookie.status_code,
+        response_no_cookie.get_json(),
+    )
     assert response_no_cookie.status_code in (400, 401, 422)
+
 
 def test_session_endpoint(client):
     # Arrange: register and login — test client stores the refresh cookie automatically
@@ -157,5 +195,9 @@ def test_session_endpoint(client):
     # --- Failure: no refresh token ---
     client.delete_cookie("refresh_token_cookie")
     response_no_cookie = client.get("/auth/session")
-    print("No refresh token (session):", response_no_cookie.status_code, response_no_cookie.get_json())
+    print(
+        "No refresh token (session):",
+        response_no_cookie.status_code,
+        response_no_cookie.get_json(),
+    )
     assert response_no_cookie.status_code in (401, 422)

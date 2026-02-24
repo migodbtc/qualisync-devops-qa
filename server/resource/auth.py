@@ -1,25 +1,33 @@
 from datetime import datetime, timezone
 import bcrypt
 from flask import Blueprint, jsonify, make_response, request
-from flask_jwt_extended import create_access_token, create_refresh_token, decode_token, get_jwt, get_jwt_identity, jwt_required, set_refresh_cookies, unset_refresh_cookies
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+    set_refresh_cookies,
+    unset_refresh_cookies,
+)
 
 from db.models import AuthUser, RefreshToken, Role, Session
 from db.database import db
 
-# === BLUEPRINT DECLARATION === 
-auth_blueprint = Blueprint(
-    'auth',
-    __name__,
-    url_prefix='/auth'
-)
+# === BLUEPRINT DECLARATION ===
+auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
 # === HELPER FUNCTIONS ===
+
 
 def hash_password(password):
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
+
 def verify_password(hashed, password):
     return bcrypt.checkpw(password.encode("utf-8"), hashed.encode("utf-8"))
+
 
 def store_jti(user_id, jti, expires_at_str):
     token = RefreshToken(
@@ -30,6 +38,7 @@ def store_jti(user_id, jti, expires_at_str):
     db.add(token)
     db.commit()
 
+
 def revoke_jti(jti):
     token = db.query(RefreshToken).filter_by(token=jti).first()
     if token:
@@ -38,8 +47,10 @@ def revoke_jti(jti):
         return True
     return False
 
+
 def find_by_jti(jti):
     return db.query(RefreshToken).filter_by(token=jti).first()
+
 
 def create_session(user_id, session_id, user_agent, ip_address, expires_at):
     if not all([user_id, session_id, user_agent, ip_address, expires_at]):
@@ -57,6 +68,7 @@ def create_session(user_id, session_id, user_agent, ip_address, expires_at):
     db.commit()
     return new_session
 
+
 def revoke_session(session_id):
     sess = db.query(Session).filter_by(session_id=session_id, revoked=0).first()
     if sess:
@@ -64,6 +76,7 @@ def revoke_session(session_id):
         db.commit()
         return True
     return False
+
 
 def unpack_register_payload(payload):
     email = payload.get("email")
@@ -76,6 +89,7 @@ def unpack_register_payload(payload):
         raise ValueError("Password missing from payload")
     return email, password, username, role
 
+
 def unpack_login_payload(payload):
     email = payload.get("email")
     password = payload.get("password")
@@ -85,6 +99,7 @@ def unpack_login_payload(payload):
         raise ValueError("Password missing from payload")
     return email, password
 
+
 def validate_register(email, password, role):
     errors = []
     if not email or not password:
@@ -93,10 +108,12 @@ def validate_register(email, password, role):
         raise ValueError("invalid role")
     return errors
 
+
 def validate_login(email, password):
     if not email or not password:
         raise ValueError("email and password are required")
     return []
+
 
 def generate_tokens_and_claims(user):
     if not user or not hasattr(user, "id") or user.id is None:
@@ -123,7 +140,9 @@ def generate_tokens_and_claims(user):
     except Exception as e:
         raise ValueError(f"Token generation failed: {e}")
 
+
 # === ROUTES ===
+
 
 @auth_blueprint.route("/register", methods=["POST"])
 def register():
@@ -154,6 +173,7 @@ def register():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
+
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
     try:
@@ -165,7 +185,9 @@ def login():
         user = db.query(AuthUser).filter_by(email=email).first()
         if not user or not verify_password(user.password_hash, password):
             return jsonify({"error": "invalid credentials"}), 401
-        access_token, refresh_token, jti, expires_at, expires_at_str = generate_tokens_and_claims(user)
+        access_token, refresh_token, jti, expires_at, expires_at_str = (
+            generate_tokens_and_claims(user)
+        )
         try:
             store_jti(user.id, jti, expires_at_str)
             user_agent = request.headers.get("User-Agent", "")
@@ -183,6 +205,7 @@ def login():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
+
 @auth_blueprint.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True, locations=["cookies"])
 def refresh():
@@ -194,6 +217,7 @@ def refresh():
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
 
 @auth_blueprint.route("/logout", methods=["POST"])
 @jwt_required(refresh=True, locations=["cookies"])
@@ -213,6 +237,7 @@ def logout():
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
 
 @auth_blueprint.route("/session", methods=["GET"])
 @jwt_required(refresh=True, locations=["cookies"])
