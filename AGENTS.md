@@ -84,6 +84,7 @@ To maintain consistency and quality across the codebase, follow these coding sty
 - Use meaningful and descriptive variable, function, and class names.
 - Write comments for complex logic or non-obvious code, but avoid unnecessary comments. Let the code speak for itself.
 - Keep functions and methods small and focused on a single responsibility.
+- Make sure to use the modern IT industry's best practices, taking note of the senior developers, architects, and engineers that came before me
 
 ### Frontend (web/)
 - Follow the ESLint and Prettier rules configured in the project.
