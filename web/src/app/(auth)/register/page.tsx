@@ -85,20 +85,24 @@ export default function RegisterPage() {
   };
   return (
     <>
-      <h2 className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
+      <h2 id='register-heading' data-testid='register-heading' className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
         Register for Thicket
       </h2>
-      <span className='w-sm text-left text-xs text-gray-600 italic'>
+      <span id='register-subheading' data-testid='register-subheading' className='w-sm text-left text-xs text-gray-600 italic'>
         Create your account to access the ATMS. Personal information can be
         edited once account has been approved.
       </span>
       <form
+        id='register-form'
+        data-testid='register-form'
         className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4'
         onSubmit={handleSubmit}
       >
         <div>
           <label
-            htmlFor='email'
+            id='register-email-label'
+            data-testid='register-email-label'
+            htmlFor='register-email'
             className='block text-[12px] font-bold text-gray-700'
           >
             Email
@@ -120,7 +124,9 @@ export default function RegisterPage() {
         </div>
         <div>
           <label
-            htmlFor='password'
+            id='register-password-label'
+            data-testid='register-password-label'
+            htmlFor='register-password'
             className='block text-[12px] font-bold text-gray-700'
           >
             Password
@@ -142,7 +148,9 @@ export default function RegisterPage() {
         </div>
         <div>
           <label
-            htmlFor='confirmPassword'
+            id='register-confirm-password-label'
+            data-testid='register-confirm-password-label'
+            htmlFor='register-confirm-password'
             className='block text-[12px] font-bold text-gray-700'
           >
             Confirm Password
@@ -204,8 +212,8 @@ export default function RegisterPage() {
             </a>
           </label>
         </div>
-        {error && <div className='text-red-500 text-xs'>{error}</div>}
-        {success && <div className='text-green-600 text-xs'>{success}</div>}
+        {error && <div id='register-error' data-testid='register-error' className='text-red-500 text-xs'>{error}</div>}
+        {success && <div id='register-success' data-testid='register-success' className='text-green-600 text-xs'>{success}</div>}
         <button
           type='submit'
           id='register-submit'
@@ -215,8 +223,8 @@ export default function RegisterPage() {
         >
           {loading ? "Registering..." : "Register"}
         </button>
-        <div className='text-xs mt-2'>
-          <a href='/login' className='text-gray-600 italic hover:underline'>
+        <div id='register-login-redirect' data-testid='register-login-redirect' className='text-xs mt-2'>
+          <a id='register-login-link' data-testid='register-login-link' href='/login' className='text-gray-600 italic hover:underline'>
             Already have an account?{" "}
             <span className='text-fuchsia-600'>Login</span>
           </a>

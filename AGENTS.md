@@ -67,21 +67,48 @@
 - After moving files or changing imports, run `pnpm lint --filter web` to check ESLint and TypeScript rules.
 - Add or update tests for any code you change.
 
-## PR Instructions
+## Coding Style
 
-- **Title format:** `[web] <Title>` or `[server] <Title>`
-- **Before committing:**
-  - In `web/`:
-    - Run `pnpm lint` to check for lint issues.
-    - Run `pnpm lint:fix` to auto-fix lint issues if needed.
-    - Run `pnpm format` to check formatting.
-    - Run `pnpm format:fix` to auto-fix formatting.
-    - Run `pnpm test` for all tests.
-    - Run `pnpm test:component` for component tests.
-    - Run `pnpm test:e2e` for E2E tests.
-  - In `server/`:
-    - Run `black .` to check and auto-format Python code.
-    - Run `flake8 .` to check for lint issues.
-    - Run `pytest` for all unit, integration, and E2E tests.
-- **Before merging:**
-  - Ensure all CI checks pass on GitHub.
+To maintain consistency and quality across the codebase, follow these coding style guidelines. Always review the necessary files line by line before making changes, and scour other files for relevant information to ensure your changes are well-informed and do not introduce unnecessary complexity.
+
+### General
+- Follow the **KISS (Keep It Simple, Stupid)** principle: Write code that is simple, clear, and easy to understand.
+- Avoid duplicating code by adhering to the **DRY (Don't Repeat Yourself)** principle. Refactor common logic into reusable functions or modules.
+- Design code with **SOLID** principles in mind:
+  - **S**ingle Responsibility: Each function, class, or module should have one clear responsibility.
+  - **O**pen/Closed: Code should be open for extension but closed for modification.
+  - **L**iskov Substitution: Subtypes should be replaceable without altering the correctness of the program.
+  - **I**nterface Segregation: Avoid forcing classes to implement unnecessary methods.
+  - **D**ependency Inversion: Depend on abstractions, not concrete implementations.
+- Avoid adding features or code that is not immediately necessary, following the **YAGNI (You Aren't Gonna Need It)** principle.
+- Use meaningful and descriptive variable, function, and class names.
+- Write comments for complex logic or non-obvious code, but avoid unnecessary comments. Let the code speak for itself.
+- Keep functions and methods small and focused on a single responsibility.
+
+### Frontend (web/)
+- Follow the ESLint and Prettier rules configured in the project.
+- Use TypeScript for type safety and avoid using `any` unless absolutely necessary.
+- Prefer functional components over class components in React.
+- Use Tailwind CSS utility classes for styling, and avoid inline styles unless necessary.
+- Organize components in the `components/` directory and group related files together.
+- Avoid over-engineering components. Start with the simplest solution and refactor only when necessary.
+
+### Backend (server/)
+- Follow the Black and Flake8 rules configured in the project.
+- Use type hints in Python wherever possible to improve readability and maintainability.
+- Keep functions and methods small and modular, adhering to the **Single Responsibility Principle**.
+- Follow the PEP 8 style guide for Python code.
+- Use SQLAlchemy ORM for database interactions and avoid raw SQL queries unless absolutely necessary.
+- Avoid premature optimization. Focus on writing clear and correct code first.
+
+### File and Directory Structure
+- Use kebab-case for filenames in the frontend (e.g., `my-component.tsx`).
+- Use snake_case for Python files in the backend (e.g., `my_module.py`).
+- Place test files in the `tests/` directory at the root level, mirroring the structure of the `src/` directory.
+- Keep related files grouped together to improve discoverability and maintainability.
+
+### Commit Messages
+- Use clear and concise commit messages that describe the purpose of the change.
+- Follow the PR title format: `[web] <Title>` or `[server] <Title>`.
+
+> **Note:** Always run the linters and formatters (`pnpm lint`, `black`, etc.) before committing to ensure adherence to the coding style.

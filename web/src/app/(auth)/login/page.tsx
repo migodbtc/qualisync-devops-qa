@@ -41,19 +41,23 @@ export default function LoginPage() {
 
   return (
     <>
-      <h2 className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
+      <h2 id='login-heading' data-testid='login-heading' className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
         Login to Thicket
       </h2>
-      <span className='w-sm text-left text-xs text-gray-600 italic'>
+      <span id='login-subheading' data-testid='login-subheading' className='w-sm text-left text-xs text-gray-600 italic'>
         Sign in to access the full extent of the ATMS
       </span>
       <form
+        id='login-form'
+        data-testid='login-form'
         className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4'
         onSubmit={handleLogin}
       >
         <div>
           <label
-            htmlFor='email'
+            id='login-email-label'
+            data-testid='login-email-label'
+            htmlFor='login-email'
             className='block text-[12px] font-bold text-gray-700'
           >
             Email
@@ -75,7 +79,9 @@ export default function LoginPage() {
         </div>
         <div>
           <label
-            htmlFor='password'
+            id='login-password-label'
+            data-testid='login-password-label'
+            htmlFor='login-password'
             className='block text-[12px] font-bold text-gray-700'
           >
             Password
@@ -105,10 +111,10 @@ export default function LoginPage() {
           {loading ? "Logging in..." : "Login"}
         </button>
         {error && (
-          <div className='text-xs text-red-600 mt-2 font-semibold'>{error}</div>
+          <div id='login-error' data-testid='login-error' className='text-xs text-red-600 mt-2 font-semibold'>{error}</div>
         )}
-        <div className='text-xs mt-2'>
-          <a href='/register' className='text-gray-600 italic hover:underline'>
+        <div id='login-register-redirect' data-testid='login-register-redirect' className='text-xs mt-2'>
+          <a id='login-register-link' data-testid='login-register-link' href='/register' className='text-gray-600 italic hover:underline'>
             Don&apos;t have an account?{" "}
             <span className='text-fuchsia-600'>Register</span>
           </a>

@@ -10,8 +10,8 @@
     "lint:fix": "pnpm exec eslint . --fix && echo Linting and auto-fixing complete! No remaining problems identified.",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "test:component": "vitest",
-    "test:e2e": "playwright test"
+    "test:component": "vitest --config vitest.config.ts",
+    "test:integration": "vitest --config vitest.integ.config.ts"
   },
   "dependencies": {
     "lucide-react": "^0.563.0",
