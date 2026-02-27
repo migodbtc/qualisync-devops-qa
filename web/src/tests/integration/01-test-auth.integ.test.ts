@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-const BASE_URL = process.env.NEXT_WEB_APP_URL ?? 'http://localhost:5000';
-const TEST_USER_EMAIL = process.env.TEST_USER_EMAIL;
-const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD;
+const BASE_URL = process.env.NEXT_PUBLIC_FLASK_API_URL ?? 'http://localhost:5000';
+const TEST_USER_EMAIL = process.env.TEST_USER_EMAIL ?? 'testuser@example.com';
+const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD ?? 'testpassword';
 
 // Check if all required environment variables are loaded
 if (!BASE_URL || !TEST_USER_EMAIL || !TEST_USER_PASSWORD) {
@@ -19,11 +19,48 @@ if (!BASE_URL || !TEST_USER_EMAIL || !TEST_USER_PASSWORD) {
 }
 
 describe('Auth Integration Tests', () => {
+  // Use a unique email per run so we never collide with a leftover DB record
+  const runId = Date.now();
+  let registeredEmail = `testuser+${runId}@example.com`;
+  let registeredPassword = TEST_USER_PASSWORD;
 
-  describe('API reachability', () => {
-    it('should have a BASE_URL defined', () => {
-      expect(BASE_URL).toBeDefined();
-      expect(BASE_URL.startsWith('http')).toBe(true);
+  describe('POST /auth/register', () => {
+    it('should return 400 when required fields are missing', async () => {
+      const response = await fetch(`${BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'incomplete@example.com' }),
+      });
+
+      expect(response.status).toBe(400);
+    });
+
+    it('should register a new user successfully', async () => {
+      // beforeAll ensures the account is deleted; this registers it fresh
+      const response = await fetch(`${BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: registeredEmail,
+          password: registeredPassword,
+        }),
+      });
+
+      expect(response.status).toBe(201);
+    });
+
+    it('should return 409 when email is already registered', async () => {
+      // User was just registered in the previous test
+      const response = await fetch(`${BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: registeredEmail,
+          password: registeredPassword,
+        }),
+      });
+
+      expect(response.status).toBe(409);
     });
   });
 
@@ -56,41 +93,16 @@ describe('Auth Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: process.env.TEST_USER_EMAIL ?? 'test@example.com',
-          password: process.env.TEST_USER_PASSWORD ?? 'testpassword',
+          email: registeredEmail,
+          password: registeredPassword,
         }),
       });
 
       expect(response.status).toBe(200);
 
       const body = await response.json();
-      expect(body).toHaveProperty('token');
-      expect(typeof body.token).toBe('string');
-    });
-  });
-
-  describe('POST /auth/register', () => {
-    it('should return 400 when required fields are missing', async () => {
-      const response = await fetch(`${BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'incomplete@example.com' }),
-      });
-
-      expect(response.status).toBe(400);
-    });
-
-    it('should return 409 when email is already registered', async () => {
-      const response = await fetch(`${BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: process.env.TEST_USER_EMAIL ?? 'test@example.com',
-          password: 'somepassword',
-        }),
-      });
-
-      expect(response.status).toBe(409);
+      expect(body).toHaveProperty('access_token');
+      expect(typeof body.access_token).toBe('string');
     });
   });
 
@@ -102,14 +114,14 @@ describe('Auth Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: process.env.TEST_USER_EMAIL ?? 'test@example.com',
-          password: process.env.TEST_USER_PASSWORD ?? 'testpassword',
+          email: registeredEmail,
+          password: registeredPassword,
         }),
       });
 
       if (response.ok) {
         const body = await response.json();
-        token = body.token;
+        token = body.access_token;
       }
     });
 
@@ -149,5 +161,20 @@ describe('Auth Integration Tests', () => {
       });
       expect(response.status).toBe(401);
     });
+  });
+
+  afterAll(async () => {
+    // Delete test account by credentials — no JWT dance needed
+    const response = await fetch(`${BASE_URL}/auth/delete`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: registeredEmail, password: registeredPassword }),
+    });
+
+    if (response.status !== 200) {
+      console.error(`Failed to delete test account: ${await response.text()}`);
+    } else {
+      console.log(`Test account with email ${registeredEmail} deleted successfully.`);
+    }
   });
 });

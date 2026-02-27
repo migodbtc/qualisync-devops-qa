@@ -10,6 +10,7 @@ from flask_jwt_extended import (
     jwt_required,
     set_refresh_cookies,
     unset_refresh_cookies,
+    verify_jwt_in_request,
 )
 
 from db.models import AuthUser, RefreshToken, Role, Session
@@ -143,7 +144,6 @@ def generate_tokens_and_claims(user):
 
 # === ROUTES ===
 
-
 @auth_blueprint.route("/register", methods=["POST"])
 def register():
     try:
@@ -152,9 +152,13 @@ def register():
         errors = validate_register(email, password, role)
         if errors:
             return jsonify({"error": errors}), 400
+
+        # Check if the user already exists
         existing = db.query(AuthUser).filter_by(email=email).first()
         if existing:
-            return jsonify({"error": "user already exists"}), 400
+            return jsonify({"error": "User already exists"}), 409  # Return 409 Conflict
+
+        # Hash the password and create the user
         pw_hash = hash_password(password)
         role_obj = db.query(Role).filter_by(name=role).first()
         role_id = role_obj.id if role_obj else 1
@@ -167,7 +171,8 @@ def register():
         )
         db.add(user)
         db.commit()
-        return jsonify({"id": user.id}), 201
+
+        return jsonify({"id": user.id}), 201  # Return 201 Created
     except (ValueError, TypeError, KeyError) as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -259,6 +264,73 @@ def session_info():
             },
         }
         return jsonify(resp)
+    except (ValueError, TypeError, KeyError) as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+@auth_blueprint.route("/me", methods=["GET"])
+@jwt_required()
+def me():
+    try:
+        identity = get_jwt_identity()
+        user = db.query(AuthUser).filter_by(id=identity).first()
+        if not user:
+            return jsonify({"authenticated": False}), 401
+        role_obj = db.query(Role).filter_by(id=user.role_id).first()
+        return jsonify(
+            {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "role": role_obj.name if role_obj else None,
+            }
+        )
+    except (ValueError, TypeError, KeyError) as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+
+
+@auth_blueprint.route("/delete", methods=["DELETE"])
+def delete_user():
+    try:
+        payload = request.get_json() or {}
+        email = payload.get("email")
+        password = payload.get("password")
+
+        if not email:
+            return jsonify({"error": "Email is required"}), 400
+
+        user = db.query(AuthUser).filter_by(email=email).first()
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        auth_header = request.headers.get("Authorization", "")
+
+        # Path 1: credential-based deletion — email + password, no JWT required
+        if not auth_header:
+            if not password:
+                return jsonify({"error": "Password required when no token is provided"}), 400
+            if not verify_password(user.password_hash, password):
+                return jsonify({"error": "Invalid credentials"}), 401
+            db.delete(user)
+            db.commit()
+            return jsonify({"message": f"User with email {email} deleted successfully"}), 200
+
+        # Path 2: JWT-based deletion
+        verify_jwt_in_request()
+        identity = get_jwt_identity()
+
+        if str(user.id) != identity:
+            role_obj = db.query(Role).filter_by(id=user.role_id).first()
+            if not role_obj or role_obj.name != "admin":
+                return jsonify({"error": "Unauthorized"}), 403
+
+        db.delete(user)
+        db.commit()
+        return jsonify({"message": f"User with email {email} deleted successfully"}), 200
+
     except (ValueError, TypeError, KeyError) as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:

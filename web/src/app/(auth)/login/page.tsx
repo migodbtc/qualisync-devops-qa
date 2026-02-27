@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -8,8 +9,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
+  const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL 
   const router = useRouter();
+
+  useEffect(() => {console.log(`API_URL=` + API_URL)}, [])
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,6 +25,11 @@ export default function LoginPage() {
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
+
+      if (res.status === 404) {
+        setError("Login endpoint not found. Please check the server configuration.");
+        return;
+      }
 
       const data = await res.json();
 
