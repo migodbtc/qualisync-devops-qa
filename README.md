@@ -11,7 +11,6 @@
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwindcss&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)
-![Playwright](https://img.shields.io/badge/Playwright-45BA4B?logo=playwright&logoColor=white)
 ![Pytest](https://img.shields.io/badge/Pytest-0A9EDC?logo=pytest&logoColor=white)
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-A7B5D1?logo=githubactions&logoColor=white)
 ![QA Automation](https://img.shields.io/badge/QA_Automation-FFB300?logo=checkmarx&logoColor=white)
