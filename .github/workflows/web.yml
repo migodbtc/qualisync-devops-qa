@@ -2,8 +2,10 @@ name: Web Formatting, Linting, & Testing Automation
 on: 
     push:
         branches:
-            - main 
+            - dev 
     pull_request:
+        branches:
+            - main
         types: [opened, synchronize]
 
 jobs: 

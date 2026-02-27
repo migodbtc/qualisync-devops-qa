@@ -4,3 +4,19 @@
 .venv
 .pytest_cache
 node_modules
+__pycache__
+
+server/db/__pycache__/
+server/resource/__pycache__/
+server/tests/__pycache__/
+
+# Generic Python ignores
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+.python-version
+
+
