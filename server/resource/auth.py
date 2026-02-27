@@ -144,6 +144,7 @@ def generate_tokens_and_claims(user):
 
 # === ROUTES ===
 
+
 @auth_blueprint.route("/register", methods=["POST"])
 def register():
     try:
@@ -314,18 +315,14 @@ def delete_user():
         if not auth_header:
             if not password:
                 return (
-                    jsonify(
-                        {"error": "Password required when no token is provided"}
-                    ),
+                    jsonify({"error": "Password required when no token is provided"}),
                     400,
                 )
             if not verify_password(user.password_hash, password):
                 return jsonify({"error": "Invalid credentials"}), 401
             db.delete(user)
             db.commit()
-            msg = {
-                "message": f"User with email {email} deleted successfully"
-            }
+            msg = {"message": f"User with email {email} deleted successfully"}
             return jsonify(msg), 200
 
         # Path 2: JWT-based deletion
@@ -339,9 +336,7 @@ def delete_user():
 
         db.delete(user)
         db.commit()
-        msg = {
-            "message": f"User with email {email} deleted successfully"
-        }
+        msg = {"message": f"User with email {email} deleted successfully"}
         return jsonify(msg), 200
 
     except (ValueError, TypeError, KeyError) as e:

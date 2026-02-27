@@ -36,6 +36,20 @@ jobs:
     test: 
         # unit & integration tests
         runs-on: ubuntu-latest
+
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping --silent"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
         steps:
             - name: Make GH Actions read the code
               uses: actions/checkout@v4
@@ -49,6 +63,12 @@ jobs:
               run: |
                 python -m pip install --upgrade pip 
                 pip install -r requirements.txt
+              working-directory: server
+
+            - name: Run database migrations
+              run: |
+                mysql -h 127.0.0.1 -u root < db/migrations/20260206_001_create_base_schema.sql
+                mysql -h 127.0.0.1 -u root < db/migrations/20260206_002_create_jwt_auth_migration.sql
               working-directory: server
 
             - name: Run unit tests 
