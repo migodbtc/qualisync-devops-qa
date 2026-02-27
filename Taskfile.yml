@@ -1,0 +1,56 @@
+
+version: '3'
+
+tasks:
+  # --- DEFAULTS ---
+  default:
+    desc: Start server then run full validations (server + web)
+    deps: [validate-all]
+
+  # --- COMMANDS ---
+  validate-all:
+    desc: Start Python server in background, then run server and web validations (all checks)
+    deps:
+      - task: _server-start
+    cmds:
+      - task: validate-server
+      - task: validate-web
+      - task: _server-stop
+
+  validate-server:
+    desc: Server-side checks like deps, formatting, lint, unit and integration tests
+    dir: server
+    cmds:
+      - pip install -r requirements.txt
+      - black --check .
+      - flake8 .
+      - pytest tests/unit
+      - pytest tests/integration
+
+  validate-web:
+    desc: Web checks like install, lint, format, component and integration tests
+    dir: web
+    cmds:
+      - pnpm install
+      - pnpm run lint
+      - pnpm run format
+      - pnpm run test:component:run
+      - pnpm run test:integration:run
+
+  # --- INTERNALS ---
+  _server-start:
+    internal: true
+    desc: Start the Flask dev server in the background for integration runs
+    dir: server
+    cmds:
+      - python main.py
+    background: true
+
+  # Internal helper: stop the Flask server that was started in background.
+  # Uses platform-specific commands to find and kill the process running main.py.
+  _server-stop:
+    internal: true
+    desc: Stop the Flask server started by `_server-start` (platform-aware)
+    cmds:
+      - >-
+        {{if eq OS "windows"}}powershell -Command "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'main.py' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"{{else}}pkill -f "python main.py" || true{{end}}

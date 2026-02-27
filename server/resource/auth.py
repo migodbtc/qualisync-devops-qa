@@ -157,7 +157,7 @@ def register():
         # Check if the user already exists
         existing = db.query(AuthUser).filter_by(email=email).first()
         if existing:
-            return jsonify({"error": "User already exists"}), 400
+            return jsonify({"error": "User already exists"}), 409
 
         # Hash the password and create the user
         pw_hash = hash_password(password)
