@@ -1,0 +1,60 @@
+name: Server Formatting, Linting, & Testing Automation
+on: 
+    push:
+        branches:
+            - main 
+    pull_request:
+        types: [opened, synchronize]
+
+jobs: 
+    lint:
+        # black and flake8
+        runs-on: ubuntu-latest
+        steps:
+            - name: Make GH Actions read the code
+              uses: actions/checkout@v4
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with: 
+                python-version: 3.11
+
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip 
+                pip install -r requirements.txt
+              working-directory: server
+
+            - name: Run Linting Check (Black)
+              run: black . --check
+              working-directory: server
+
+            - name: Run Logic Check (Flake8)
+              run: flake8 .
+              working-directory: server
+
+    test: 
+        # unit & integration tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Make GH Actions read the code
+              uses: actions/checkout@v4
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with: 
+                python-version: 3.11
+
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip 
+                pip install -r requirements.txt
+              working-directory: server
+
+            - name: Run unit tests 
+              working-directory: server 
+              run: pytest tests/unit
+
+            - name: Run integration tests 
+              working-directory: server 
+              run: pytest tests/integration
