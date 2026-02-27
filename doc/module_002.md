@@ -1,38 +1,65 @@
 
-# Project Module 2: [Title]
+# 🧩 Project Module 2: Web App Revamp & QA Engineering
+**Rationale for Creation**: Expand the web application to engineer complex QA scenarios, enhance cybersecurity, integrate automation, and adopt DevOps best practices.
+**Objective:** Rebuild and extend the system for advanced testing, security, and automation.
 
-## Overview
+## 🛠 Tech Stack Context
+*   **Frontend:** Next.js (TypeScript) + Tailwind CSS
+*   **Backend:** Flask (Python)
+*   **ORM:** SQLAlchemy
+*   **Database:** MySQL (migrated from SQLite)
 
-## Objectives
+---
 
-redo the web application within the system to create more complex situations to engineer quality assurance tests, penetrate/improve cybersecurity, integrate automation and other devops practices etc
+## Phase 1: Database & Backend Migration
+*Goal: Move from SQLite to MySQL, update schema, and enhance backend logic.*
 
-## Tasks
+- [x] **Design new database schema**
+- [x] **Install MySQL and integrate with Flask**
+- [x] **Change backend from SQLite to MySQL**
+- [x] **Replace old database/ with migrations/**
+- [x] **Complete ORM mapping**
+- [x] **Add at least 5 advanced SQL queries (e.g., link apartment to tenant, associate tenant to bill, etc.)**
 
-- design the schema for the new database
-- install database and integrate into project
-- change from sqlite to mysql for flask
-- replace database/ with sqlite and place with migrations/
-- complete orm mapping
-- add additional sql queries such as linking apartment to tenant, associating tenant to bill etc. do at least 5
-- revamp authentication screens 1. login 2. register 3. forgot password (optional)
-- implement dashboard layout as well as the dashboard pages
-  - dashboard, tenants, rooms, payments, finance, email, profile, settings
-- complete ui/ux interaction 
+---
 
-- implement backend routes connecting to mysql
+## Phase 2: Authentication & Dashboard UI
+*Goal: Revamp authentication screens and implement dashboard pages with improved UI/UX.*
 
-- implement authorization and RBAC using JWT tokenization
-- add session logging for hybrid JWT architecture
-- complete the authentication feature of the web app
-- lint and format the web app and server
+- [x] **Revamp authentication screens**
+    - [x] Login
+    - [x] Register
+    - [x] Forgot password (optional)
+- [x] **Implement dashboard layout and pages**
+    - [x] Dashboard
+    - [x] Tenants
+    - [x] Rooms
+    - [x] Payments
+    - [x] Finance
+    - [x] Email
+    - [x] Profile
+    - [x] Settings
+- [x] **Complete UI/UX interaction**
 
-- implement custom joins such as two table joins, three table joins depending on the feature page
+---
 
-- defragment and optimize nextjs project using prettier then eslint then prettier again (post-eslint)
-- defragment and optimize flaskapi server using black then flake8 then black again (post-flake, or inverse, as long as formatting -> logic check -> formatting again)
+## Phase 3: Backend Routes & Security
+*Goal: Connect backend to MySQL, implement authorization, and session logging.*
 
-- deploy into cloud (no idea how)
+- [x] **Implement backend routes connecting to MySQL**
+- [x] **Implement authorization and RBAC using JWT tokenization**
+- [x] **Add session logging for hybrid JWT architecture**
+- [x] **Complete authentication feature of the web app**
+
+---
+
+## Phase 4: Quality & Automation
+*Goal: Lint, format, and automate quality checks for web app and server.*
+
+- [x] **Lint and format the web app and server**
+
+---
 
 ## Concepts & Notes
+
 

@@ -1,6 +1,8 @@
 [project]
 name = "qualisync-flask-api"
-description = "Basically the Flask API used for Qualisync project by Migo for learning DevOps, automation, quality assurance, linting, etc"
+version = "0.0.1a0"
+description = "[AI-GENERATED DESCRIPTION] Flask API backend for a two-service web application (Next.js frontend + Flask backend) managed by Docker Compose. Provides REST endpoints for authentication, user management, and apartment/tenant operations, using SQLAlchemy ORM and supporting DevOps, automation, and QA workflows."
+authors = [{ name = "Migo Gennesaret", email = "migueljustin.bunda@proton.me" }]
 
 [tool.black]
 line-length = 88
@@ -16,10 +18,8 @@ exclude = '''
 '''
 
 [tool.flake8]
-ignore = ['E231', 'E241']
-per-file-ignores = [
-    '__init__.py:F401',
-]
+ignore = ['E231', 'E241', 'W292']
+per-file-ignores = ['__init__.py:F401']
 max-line-length = 88
 count = true
 exclude = ["venv*", ".venv*", "db*", "pycache*", "temp*"]

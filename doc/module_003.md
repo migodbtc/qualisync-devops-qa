@@ -1,0 +1,25 @@
+
+#### automated QA
+- learn about unit & integration testing in the context of next.js applications
+- learn about e2e testing in the context of next.js applications
+- install vitest for u&i testing on nextjs (`pnpm add -D vitest ./filter web`)
+  - install `@testing-library/react`, `@testing-library/jest-dom`, and `js-dom` as vitest dependencies
+  - generate vitest config and setup mock dom file (`setup.ts`)
+  - generate sanity check test under `unit/`
+- install playwright for integration on nextjs `pnpm add -D @playwright/test --filter ./web`
+  - generate sanity check test under `e2e/`
+- install pytest for unit testing on flask api `pip install pytest`
+- install flask test client (FTC) for integration testing on flask api (preinstalled with Flask)
+- install requests (library) for e2e testing for flask api `pip install requests`
+- mandatory freeze `pip freeze > requirements.txt`
+- use markdown files for manual code review for both flask & nextjs
+  - create a viable copy-pastable format that can be used for code reviews
+  - automate using a script or something so that u dont have to copy paste, modify file name, manually put in date & time, etc
+- write test scenarios for Nextjs
+  - unit & integration (vitest)
+  - end-to-end (playwright)
+  - code review (custom automated migo-style markdowns)
+- write test scenarios for Flask API
+  - unit (pytest)
+  - integration (FTC)
+  - end-to-end (requests library)

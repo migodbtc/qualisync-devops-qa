@@ -1,0 +1,43 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - heading "Register for Thicket" [level=2] [ref=e4]
+      - generic [ref=e5]: Create your account to access the ATMS. Personal information can be edited once account has been approved.
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - generic [ref=e8]: Email
+          - generic [ref=e9]:
+            - img [ref=e10]
+            - textbox "Enter your email" [ref=e13]: bademail
+        - generic [ref=e14]:
+          - generic [ref=e15]: Password
+          - generic [ref=e16]:
+            - img [ref=e17]
+            - textbox "Enter your password" [ref=e20]: short
+        - generic [ref=e21]:
+          - generic [ref=e22]: Confirm Password
+          - generic [ref=e23]:
+            - img [ref=e24]
+            - textbox "Re-enter your password" [active] [ref=e27]: short
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - checkbox "I agree to the Terms & Conditions" [ref=e30]
+            - text: I agree to the
+            - link "Terms & Conditions" [ref=e31] [cursor=pointer]:
+              - /url: /terms
+          - generic [ref=e32]:
+            - checkbox "I agree to the Data Privacy Policy" [ref=e33]
+            - text: I agree to the
+            - link "Data Privacy Policy" [ref=e34] [cursor=pointer]:
+              - /url: /privacy
+        - button "Register" [ref=e35] [cursor=pointer]
+        - link "Already have an account? Login" [ref=e37] [cursor=pointer]:
+          - /url: /login
+    - generic [ref=e38]:
+      - generic [ref=e39]: Thicket by Migo
+      - generic [ref=e40]: Apartment-Tenant Management System
+  - alert [ref=e41]
+```

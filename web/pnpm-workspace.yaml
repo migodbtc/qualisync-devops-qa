@@ -1,6 +1,12 @@
+packages:
+  - web
+  - server
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
-packages:
-  - "web"
-  - "server"
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver

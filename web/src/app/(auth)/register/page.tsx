@@ -85,20 +85,32 @@ export default function RegisterPage() {
   };
   return (
     <>
-      <h2 className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
+      <h2
+        id='register-heading'
+        data-testid='register-heading'
+        className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'
+      >
         Register for Thicket
       </h2>
-      <span className='w-sm text-left text-xs text-gray-600 italic'>
+      <span
+        id='register-subheading'
+        data-testid='register-subheading'
+        className='w-sm text-left text-xs text-gray-600 italic'
+      >
         Create your account to access the ATMS. Personal information can be
         edited once account has been approved.
       </span>
       <form
+        id='register-form'
+        data-testid='register-form'
         className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4'
         onSubmit={handleSubmit}
       >
         <div>
           <label
-            htmlFor='email'
+            id='register-email-label'
+            data-testid='register-email-label'
+            htmlFor='register-email'
             className='block text-[12px] font-bold text-gray-700'
           >
             Email
@@ -107,8 +119,9 @@ export default function RegisterPage() {
             <Mail className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='email'
-              id='email'
+              id='register-email'
               name='email'
+              data-testid='register-email'
               required
               placeholder='Enter your email'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -119,7 +132,9 @@ export default function RegisterPage() {
         </div>
         <div>
           <label
-            htmlFor='password'
+            id='register-password-label'
+            data-testid='register-password-label'
+            htmlFor='register-password'
             className='block text-[12px] font-bold text-gray-700'
           >
             Password
@@ -128,8 +143,9 @@ export default function RegisterPage() {
             <Lock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='password'
-              id='password'
+              id='register-password'
               name='password'
+              data-testid='register-password'
               required
               placeholder='Enter your password'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -140,7 +156,9 @@ export default function RegisterPage() {
         </div>
         <div>
           <label
-            htmlFor='confirmPassword'
+            id='register-confirm-password-label'
+            data-testid='register-confirm-password-label'
+            htmlFor='register-confirm-password'
             className='block text-[12px] font-bold text-gray-700'
           >
             Confirm Password
@@ -149,8 +167,9 @@ export default function RegisterPage() {
             <Lock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='password'
-              id='confirmPassword'
+              id='register-confirm-password'
               name='confirmPassword'
+              data-testid='register-confirm-password'
               required
               placeholder='Re-enter your password'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -163,6 +182,8 @@ export default function RegisterPage() {
           <label className='flex items-center gap-2 text-xs text-gray-700'>
             <input
               type='checkbox'
+              id='register-tnc'
+              data-testid='register-tnc'
               checked={agreedTnC}
               onChange={(e) => setAgreedTnC(e.target.checked)}
               className='accent-fuchsia-600 rounded border-gray-300'
@@ -181,6 +202,8 @@ export default function RegisterPage() {
           <label className='flex items-center gap-2 text-xs text-gray-700'>
             <input
               type='checkbox'
+              id='register-privacy'
+              data-testid='register-privacy'
               checked={agreedPrivacy}
               onChange={(e) => setAgreedPrivacy(e.target.checked)}
               className='accent-fuchsia-600 rounded border-gray-300'
@@ -197,17 +220,44 @@ export default function RegisterPage() {
             </a>
           </label>
         </div>
-        {error && <div className='text-red-500 text-xs'>{error}</div>}
-        {success && <div className='text-green-600 text-xs'>{success}</div>}
+        {error && (
+          <div
+            id='register-error'
+            data-testid='register-error'
+            className='text-red-500 text-xs'
+          >
+            {error}
+          </div>
+        )}
+        {success && (
+          <div
+            id='register-success'
+            data-testid='register-success'
+            className='text-green-600 text-xs'
+          >
+            {success}
+          </div>
+        )}
         <button
           type='submit'
+          id='register-submit'
+          data-testid='register-submit'
           className='bg-fuchsia-600 text-white font-semibold py-2 mt-4 rounded-md hover:bg-fuchsia-700 transition cursor-pointer'
           disabled={loading}
         >
           {loading ? "Registering..." : "Register"}
         </button>
-        <div className='text-xs mt-2'>
-          <a href='/login' className='text-gray-600 italic hover:underline'>
+        <div
+          id='register-login-redirect'
+          data-testid='register-login-redirect'
+          className='text-xs mt-2'
+        >
+          <a
+            id='register-login-link'
+            data-testid='register-login-link'
+            href='/login'
+            className='text-gray-600 italic hover:underline'
+          >
             Already have an account?{" "}
             <span className='text-fuchsia-600'>Login</span>
           </a>

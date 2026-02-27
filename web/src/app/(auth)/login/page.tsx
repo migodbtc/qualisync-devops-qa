@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -8,7 +9,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL || "";
+  const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL;
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -22,6 +23,13 @@ export default function LoginPage() {
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
+
+      if (res.status === 404) {
+        setError(
+          "Login endpoint not found. Please check the server configuration.",
+        );
+        return;
+      }
 
       const data = await res.json();
 
@@ -41,19 +49,31 @@ export default function LoginPage() {
 
   return (
     <>
-      <h2 className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
+      <h2
+        id='login-heading'
+        data-testid='login-heading'
+        className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'
+      >
         Login to Thicket
       </h2>
-      <span className='w-sm text-left text-xs text-gray-600 italic'>
+      <span
+        id='login-subheading'
+        data-testid='login-subheading'
+        className='w-sm text-left text-xs text-gray-600 italic'
+      >
         Sign in to access the full extent of the ATMS
       </span>
       <form
+        id='login-form'
+        data-testid='login-form'
         className='w-full max-w-sm bg-white py-8 rounded-lg flex flex-col gap-4'
         onSubmit={handleLogin}
       >
         <div>
           <label
-            htmlFor='email'
+            id='login-email-label'
+            data-testid='login-email-label'
+            htmlFor='login-email'
             className='block text-[12px] font-bold text-gray-700'
           >
             Email
@@ -62,8 +82,9 @@ export default function LoginPage() {
             <Mail className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='email'
-              id='email'
+              id='login-email'
               name='email'
+              data-testid='login-email'
               required
               placeholder='Enter your email'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -74,7 +95,9 @@ export default function LoginPage() {
         </div>
         <div>
           <label
-            htmlFor='password'
+            id='login-password-label'
+            data-testid='login-password-label'
+            htmlFor='login-password'
             className='block text-[12px] font-bold text-gray-700'
           >
             Password
@@ -83,8 +106,9 @@ export default function LoginPage() {
             <Lock className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4' />
             <input
               type='password'
-              id='password'
+              id='login-password'
               name='password'
+              data-testid='login-password'
               required
               placeholder='Enter your password'
               className='w-full pl-9 pr-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-sm text-gray-500'
@@ -95,16 +119,33 @@ export default function LoginPage() {
         </div>
         <button
           type='submit'
+          id='login-submit'
+          data-testid='login-submit'
           className='bg-fuchsia-600 text-white font-semibold py-2 mt-4 rounded-md hover:bg-fuchsia-700 transition cursor-pointer'
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
         </button>
         {error && (
-          <div className='text-xs text-red-600 mt-2 font-semibold'>{error}</div>
+          <div
+            id='login-error'
+            data-testid='login-error'
+            className='text-xs text-red-600 mt-2 font-semibold'
+          >
+            {error}
+          </div>
         )}
-        <div className='text-xs mt-2'>
-          <a href='/register' className='text-gray-600 italic hover:underline'>
+        <div
+          id='login-register-redirect'
+          data-testid='login-register-redirect'
+          className='text-xs mt-2'
+        >
+          <a
+            id='login-register-link'
+            data-testid='login-register-link'
+            href='/register'
+            className='text-gray-600 italic hover:underline'
+          >
             Don&apos;t have an account?{" "}
             <span className='text-fuchsia-600'>Register</span>
           </a>
