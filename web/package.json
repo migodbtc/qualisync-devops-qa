@@ -11,7 +11,9 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test:component": "vitest --config vitest.config.ts",
-    "test:integration": "vitest --config vitest.integ.config.ts"
+    "test:integration": "vitest --config vitest.integ.config.ts",
+    "test:component:run": "vitest run --config vitest.config.ts",
+    "test:integration:run": "vitest run --config vitest.integ.config.ts"
   },
   "dependencies": {
     "lucide-react": "^0.563.0",

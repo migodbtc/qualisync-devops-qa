@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -9,10 +9,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL 
+  const API_URL = process.env.NEXT_PUBLIC_FLASK_API_URL;
   const router = useRouter();
-
-  useEffect(() => {console.log(`API_URL=` + API_URL)}, [])
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,7 +25,9 @@ export default function LoginPage() {
       });
 
       if (res.status === 404) {
-        setError("Login endpoint not found. Please check the server configuration.");
+        setError(
+          "Login endpoint not found. Please check the server configuration.",
+        );
         return;
       }
 
@@ -49,10 +49,18 @@ export default function LoginPage() {
 
   return (
     <>
-      <h2 id='login-heading' data-testid='login-heading' className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
+      <h2
+        id='login-heading'
+        data-testid='login-heading'
+        className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'
+      >
         Login to Thicket
       </h2>
-      <span id='login-subheading' data-testid='login-subheading' className='w-sm text-left text-xs text-gray-600 italic'>
+      <span
+        id='login-subheading'
+        data-testid='login-subheading'
+        className='w-sm text-left text-xs text-gray-600 italic'
+      >
         Sign in to access the full extent of the ATMS
       </span>
       <form
@@ -119,10 +127,25 @@ export default function LoginPage() {
           {loading ? "Logging in..." : "Login"}
         </button>
         {error && (
-          <div id='login-error' data-testid='login-error' className='text-xs text-red-600 mt-2 font-semibold'>{error}</div>
+          <div
+            id='login-error'
+            data-testid='login-error'
+            className='text-xs text-red-600 mt-2 font-semibold'
+          >
+            {error}
+          </div>
         )}
-        <div id='login-register-redirect' data-testid='login-register-redirect' className='text-xs mt-2'>
-          <a id='login-register-link' data-testid='login-register-link' href='/register' className='text-gray-600 italic hover:underline'>
+        <div
+          id='login-register-redirect'
+          data-testid='login-register-redirect'
+          className='text-xs mt-2'
+        >
+          <a
+            id='login-register-link'
+            data-testid='login-register-link'
+            href='/register'
+            className='text-gray-600 italic hover:underline'
+          >
             Don&apos;t have an account?{" "}
             <span className='text-fuchsia-600'>Register</span>
           </a>

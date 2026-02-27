@@ -85,10 +85,18 @@ export default function RegisterPage() {
   };
   return (
     <>
-      <h2 id='register-heading' data-testid='register-heading' className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'>
+      <h2
+        id='register-heading'
+        data-testid='register-heading'
+        className='w-sm text-left text-2xl font-bold text-gray-700 mb-1 flex flex-row gap-2'
+      >
         Register for Thicket
       </h2>
-      <span id='register-subheading' data-testid='register-subheading' className='w-sm text-left text-xs text-gray-600 italic'>
+      <span
+        id='register-subheading'
+        data-testid='register-subheading'
+        className='w-sm text-left text-xs text-gray-600 italic'
+      >
         Create your account to access the ATMS. Personal information can be
         edited once account has been approved.
       </span>
@@ -212,8 +220,24 @@ export default function RegisterPage() {
             </a>
           </label>
         </div>
-        {error && <div id='register-error' data-testid='register-error' className='text-red-500 text-xs'>{error}</div>}
-        {success && <div id='register-success' data-testid='register-success' className='text-green-600 text-xs'>{success}</div>}
+        {error && (
+          <div
+            id='register-error'
+            data-testid='register-error'
+            className='text-red-500 text-xs'
+          >
+            {error}
+          </div>
+        )}
+        {success && (
+          <div
+            id='register-success'
+            data-testid='register-success'
+            className='text-green-600 text-xs'
+          >
+            {success}
+          </div>
+        )}
         <button
           type='submit'
           id='register-submit'
@@ -223,8 +247,17 @@ export default function RegisterPage() {
         >
           {loading ? "Registering..." : "Register"}
         </button>
-        <div id='register-login-redirect' data-testid='register-login-redirect' className='text-xs mt-2'>
-          <a id='register-login-link' data-testid='register-login-link' href='/login' className='text-gray-600 italic hover:underline'>
+        <div
+          id='register-login-redirect'
+          data-testid='register-login-redirect'
+          className='text-xs mt-2'
+        >
+          <a
+            id='register-login-link'
+            data-testid='register-login-link'
+            href='/login'
+            className='text-gray-600 italic hover:underline'
+          >
             Already have an account?{" "}
             <span className='text-fuchsia-600'>Login</span>
           </a>

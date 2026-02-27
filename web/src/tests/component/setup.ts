@@ -1,9 +1,9 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Mock next/navigation hooks
-vi.mock('next/navigation', () => ({
+vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
@@ -12,7 +12,7 @@ vi.mock('next/navigation', () => ({
     forward: vi.fn(),
     prefetch: vi.fn(),
   }),
-  usePathname: () => '/mock-path',
+  usePathname: () => "/mock-path",
   useSearchParams: () => new URLSearchParams(),
   useParams: () => ({}),
 }));

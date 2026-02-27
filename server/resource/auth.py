@@ -156,7 +156,7 @@ def register():
         # Check if the user already exists
         existing = db.query(AuthUser).filter_by(email=email).first()
         if existing:
-            return jsonify({"error": "User already exists"}), 409  # Return 409 Conflict
+            return jsonify({"error": "User already exists"}), 400
 
         # Hash the password and create the user
         pw_hash = hash_password(password)
@@ -176,6 +176,7 @@ def register():
     except (ValueError, TypeError, KeyError) as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
+
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 
@@ -269,6 +270,7 @@ def session_info():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
+
 @auth_blueprint.route("/me", methods=["GET"])
 @jwt_required()
 def me():
@@ -311,12 +313,20 @@ def delete_user():
         # Path 1: credential-based deletion — email + password, no JWT required
         if not auth_header:
             if not password:
-                return jsonify({"error": "Password required when no token is provided"}), 400
+                return (
+                    jsonify(
+                        {"error": "Password required when no token is provided"}
+                    ),
+                    400,
+                )
             if not verify_password(user.password_hash, password):
                 return jsonify({"error": "Invalid credentials"}), 401
             db.delete(user)
             db.commit()
-            return jsonify({"message": f"User with email {email} deleted successfully"}), 200
+            msg = {
+                "message": f"User with email {email} deleted successfully"
+            }
+            return jsonify(msg), 200
 
         # Path 2: JWT-based deletion
         verify_jwt_in_request()
@@ -329,7 +339,10 @@ def delete_user():
 
         db.delete(user)
         db.commit()
-        return jsonify({"message": f"User with email {email} deleted successfully"}), 200
+        msg = {
+            "message": f"User with email {email} deleted successfully"
+        }
+        return jsonify(msg), 200
 
     except (ValueError, TypeError, KeyError) as e:
         return jsonify({"error": str(e)}), 400
