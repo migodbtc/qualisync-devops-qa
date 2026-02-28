@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
+import os
 from datetime import timedelta
 from resource.auth import auth_blueprint
 from flask_jwt_extended import JWTManager
@@ -14,7 +15,10 @@ app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_COOKIE_SAMESITE"] = "Lax"
 app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
 
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+# from hardcoded origins to dynamic env origins
+allowed_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(',')
+
+CORS(app, supports_credentials=True, origins=allowed_origins)
 
 jwt = JWTManager(app)
 
