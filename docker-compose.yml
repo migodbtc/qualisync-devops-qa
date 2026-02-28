@@ -1,13 +1,46 @@
 # Orchestration to connect Nextjs, Flask, and MySQL
 
 services:
+
+  db:
+    container_name: qualisync-db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: very_secure_password_for_qualisync
+      MYSQL_DATABASE: fuchsia_atms_db
+      MYSQL_USER: qualisync
+      MYSQL_PASSWORD: password_qualisync_lol
+    volumes: 
+      - db-data:/var/lib/mysql # data persistence
+      - ./server/db/migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3307:3306" # 3306 = xampp mysql, 3307 = docker-compose mysql
+    restart: unless-stopped
+    # health check - a natural Docker command ran 
+    # to check if a service (db) is REALLY ready
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", '--password=${MYSQL_ROOT_PASSWORD}']
+      interval: 10s # run check every x seconds
+      timeout: 5s # check < timeout == failed
+      retries: 10 # failed if retries >= 10
+      start_period: 10s # grace period before counting failure
+    networks:
+      - default 
+
   backend:
     container_name: qualisync-api
     build: ./server
+    environment:
+      - DB_HOST=db # connect to db service along w valid port
+      - DB_PORT=3306 # 3306 > 3307 because i mapped the compose sql service to 3307 
+      # but matches to 3306 when running
     ports:
       - 5821:5821
     volumes:
       - ./server/db:/app/db
+    depends_on:
+      db:
+        condition: service_healthy
     networks: 
       - default
 
@@ -22,3 +55,6 @@ services:
       - backend
     networks: 
       - default
+
+volumes:
+  db-data: {}
