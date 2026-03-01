@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_cors import CORS
 
@@ -6,18 +7,30 @@ from datetime import timedelta
 from resource.auth import auth_blueprint
 from flask_jwt_extended import JWTManager
 
+load_dotenv()
+
 app = Flask(__name__)
-app.config["DEBUG"] = True
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=360)
-app.config["JWT_SECRET_KEY"] = "a-very-long-and-secure-secret-key-32chars"
-app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
-app.config["JWT_COOKIE_SECURE"] = False
-app.config["JWT_COOKIE_SAMESITE"] = "Lax"
-app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
+app.config["DEBUG"] = os.getenv("FLASK_DEBUG").lower() in ("1", "true", "yes")
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(
+    minutes=int(os.getenv("PERMANENT_SESSION_MINUTES"))
+)
+app.config["JWT_SECRET_KEY"] = os.getenv(
+    "JWT_SECRET_KEY"
+)
+app.config["JWT_TOKEN_LOCATION"] = os.getenv(
+    "JWT_TOKEN_LOCATION"
+).split(",")
+app.config["JWT_COOKIE_SECURE"] = os.getenv("JWT_COOKIE_SECURE").lower() in (
+    "1",
+    "true",
+    "yes",
+)
+app.config["JWT_COOKIE_SAMESITE"] = os.getenv("JWT_COOKIE_SAMESITE")
+app.config["JWT_REFRESH_COOKIE_NAME"] = os.getenv(
+    "JWT_REFRESH_COOKIE_NAME"
+)
 
-# from hardcoded origins to dynamic env origins
 allowed_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(',')
-
 CORS(app, supports_credentials=True, origins=allowed_origins)
 
 jwt = JWTManager(app)
