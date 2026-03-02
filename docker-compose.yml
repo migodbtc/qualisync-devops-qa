@@ -11,32 +11,23 @@ services:
       MYSQL_USER: qualisync
       MYSQL_PASSWORD: password_qualisync_lol
     volumes: 
-      - db-data:/var/lib/mysql # data persistence
+      - db-data:/var/lib/mysql 
       - ./server/db/migrations:/docker-entrypoint-initdb.d:ro
     ports:
-      - "3307:3306" # 3306 = xampp mysql, 3307 = docker-compose mysql
+      - "3307:3306" 
     restart: unless-stopped
-    # health check - a natural Docker command ran 
-    # to check if a service (db) is REALLY ready
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", '--password=${MYSQL_ROOT_PASSWORD}']
-      interval: 10s # run check every x seconds
-      timeout: 5s # check < timeout == failed
-      retries: 10 # failed if retries >= 10
-      start_period: 10s # grace period before counting failure
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", '--password=$${MYSQL_ROOT_PASSWORD}']
+      interval: 10s 
+      timeout: 5s 
+      retries: 10 
+      start_period: 10s 
     networks:
       - default 
 
   backend:
     container_name: qualisync-api
     build: ./server
-    command: >
-      sh -c "
-        echo '[ENV] DB_HOST:' $$([ -n \"$$DB_HOST\" ] && echo 'SET' || echo 'MISSING') &&
-        echo '[ENV] DB_PORT:' $$([ -n \"$$DB_PORT\" ] && echo 'SET' || echo 'MISSING') &&
-        echo '[ENV] CORS_ALLOWED_ORIGINS:' $$([ -n \"$$CORS_ALLOWED_ORIGINS\" ] && echo 'SET' || echo 'MISSING') &&
-        .venv/bin/python main.py
-      "
     ports:
       - 5821:5821
     env_file:
@@ -44,17 +35,20 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=3306
+      - FLASK_API_HOST=0.0.0.0
+      - FLASK_API_PORT=5821
     volumes:
       - ./server/db:/app/db
     depends_on:
       db:
         condition: service_healthy
-    # healthcheck:
-    #   test: ["CMD", "curl", ""]
-    #   interval: 1m30s
-    #   timeout: 30s
-    #   retries: 5
-    #   start_period: 30s
+    healthcheck:
+      # RECOMMENDED HEALTH CHECK - add dedicated /health endpoint
+      test: ["CMD-SHELL", "curl -f http://$${FLASK_API_HOST}:$${FLASK_API_PORT}/ || exit 1"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     networks: 
       - default
 
@@ -67,12 +61,6 @@ services:
       - ./web/.env
     environment:
       - NEXT_PUBLIC_FLASK_API_URL=http://localhost:5821
-    # ENV DEBUGS - FRONTEND
-    command: >
-      sh -c "
-        echo '[ENV] NEXT_PUBLIC_FLASK_API_URL:' $$([ -n \"$$NEXT_PUBLIC_FLASK_API_URL\" ] && echo 'SET' || echo 'MISSING') &&
-        pnpm dev
-      "
     depends_on: 
       - backend
     networks: 
