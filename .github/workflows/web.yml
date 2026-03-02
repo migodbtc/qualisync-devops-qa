@@ -63,7 +63,7 @@ jobs:
                 image: mysql:8.0
                 env:
                     MYSQL_ROOT_PASSWORD: root
-                    MYSQL_DATABASE: qualisync_test
+                    MYSQL_DATABASE: fuchsia_atms_db
                     MYSQL_USER: testuser
                     MYSQL_PASSWORD: testpassword
                 ports:
@@ -113,8 +113,8 @@ jobs:
 
             - name: Run database migrations
               run: |
-                mysql -h 127.0.0.1 -u root -proot qualisync_test < db/migrations/20260206_001_create_base_schema.sql
-                mysql -h 127.0.0.1 -u root -proot qualisync_test < db/migrations/20260206_002_create_jwt_auth_migration.sql
+                mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_001_create_base_schema.sql
+                mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_002_create_jwt_auth_migration.sql
               working-directory: server
 
             - name: Install Task runner
@@ -128,7 +128,7 @@ jobs:
                 DB_PORT: 3306
                 DB_USER: testuser
                 DB_PASSWORD: testpassword
-                DB_NAME: qualisync_test
+                DB_NAME: fuchsia_atms_db
                 FLASK_DEBUG: 1
                 FLASK_PERMANENT_SESSION_MINUTES: 60
                 FLASK_API_HOST: localhost
