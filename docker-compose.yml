@@ -6,10 +6,10 @@ services:
     container_name: qualisync-db
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: very_secure_password_for_qualisync
-      MYSQL_DATABASE: fuchsia_atms_db
-      MYSQL_USER: qualisync
-      MYSQL_PASSWORD: password_qualisync_lol
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes: 
       - db-data:/var/lib/mysql 
       - ./server/db/migrations:/docker-entrypoint-initdb.d:ro
@@ -35,8 +35,8 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=3306
-      - FLASK_API_HOST=0.0.0.0
-      - FLASK_API_PORT=5821
+      - FLASK_API_HOST=${FLASK_API_HOST}
+      - FLASK_API_PORT=${FLASK_API_PORT}
     volumes:
       - ./server/db:/app/db
     depends_on:

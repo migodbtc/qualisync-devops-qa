@@ -62,11 +62,14 @@ jobs:
             mysql:
                 image: mysql:8.0
                 env:
-                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: qualisync_test
+                    MYSQL_USER: testuser
+                    MYSQL_PASSWORD: testpassword
                 ports:
                     - 3306:3306
                 options: >-
-                    --health-cmd="mysqladmin ping --silent"
+                    --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
                     --health-interval=10s
                     --health-timeout=5s
                     --health-retries=5
@@ -96,10 +99,6 @@ jobs:
                 test -f pnpm-lock.yaml && echo "pnpm-lock.yaml found" || (echo "pnpm-lock.yaml missing!" && exit 1)
               working-directory: web 
 
-            - name: Install PNPM dependencies
-              run: pnpm install --frozen-lockfile
-              working-directory: web
-
             # ── Python / Backend setup ─────────────────────────────────────
             - name: Setup Python
               uses: actions/setup-python@v5
@@ -114,13 +113,32 @@ jobs:
 
             - name: Run database migrations
               run: |
-                mysql -h 127.0.0.1 -u root < db/migrations/20260206_001_create_base_schema.sql
-                mysql -h 127.0.0.1 -u root < db/migrations/20260206_002_create_jwt_auth_migration.sql
+                mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_001_create_base_schema.sql
+                mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_002_create_jwt_auth_migration.sql
               working-directory: server
+
+            - name: Install Task runner
+              run: sh -c "$(curl -ssL https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
             - name: Start Flask server in background
               run: python main.py &
               working-directory: server
+              env:
+                DB_HOST: 127.0.0.1
+                DB_PORT: 3306
+                DB_USER: testuser
+                DB_PASSWORD: testpassword
+                DB_NAME: qualisync_test
+                FLASK_DEBUG: 1
+                FLASK_PERMANENT_SESSION_MINUTES: 60
+                FLASK_API_HOST: localhost
+                FLASK_API_PORT: 5821
+                JWT_SECRET_KEY: test-secret-key-for-ci-only
+                JWT_TOKEN_LOCATION: headers
+                JWT_COOKIE_SECURE: 0
+                JWT_COOKIE_SAMESITE: Lax
+                JWT_REFRESH_COOKIE_NAME: refresh_token
+                CORS_ALLOWED_ORIGINS: http://localhost:3000
 
             - name: Wait for Flask server to be ready
               run: |
@@ -139,12 +157,8 @@ jobs:
                 echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD }}" >> web/.env
 
             # ── Tests ──────────────────────────────────────────────────────
-            - name: Run component tests
-              run: pnpm run test:component:run
-              working-directory: web
-
-            - name: Run integration tests
-              run: pnpm run test:integration:run
+            - name: Validate web
+              run: task validate-web
               working-directory: web
 
             
