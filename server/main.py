@@ -52,7 +52,7 @@ app.config["JWT_REFRESH_COOKIE_NAME"] = os.getenv("JWT_REFRESH_COOKIE_NAME")
 allowed_origins = os.environ.get("CORS_ALLOWED_ORIGINS").split(",")
 if allowed_origins is None:
     raise ValueError(
-        f"Missing allowed_origins environment variable (must at least be one)."
+        "Missing allowed_origins environment variable (must at least be one)."
     )
 CORS(app, supports_credentials=True, origins=allowed_origins)
 

@@ -60,7 +60,8 @@ services:
     env_file:
       - ./web/.env
     environment:
-      - NEXT_PUBLIC_FLASK_API_URL=http://localhost:5821
+      - NEXT_PUBLIC_FLASK_API_URL=http://backend:5821
+      - FLASK_API_URL=http://backend:5821
     depends_on: 
       - backend
     networks: 

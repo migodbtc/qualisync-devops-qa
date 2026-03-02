@@ -1,0 +1,14 @@
+version: "3"
+
+tasks:
+  default:
+    deps: [validate-web]
+
+  validate-web:
+    desc: Web checks like install, lint, format, component and integration tests
+    cmds:
+      - pnpm install
+      - pnpm run lint:fix
+      - pnpm run format:fix
+      - pnpm run test:component:run
+      - pnpm run test:integration:run

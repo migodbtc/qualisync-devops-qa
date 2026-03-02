@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_FLASK_API_URL ?? "http://localhost:5000";
+  process.env.NEXT_PUBLIC_FLASK_API_URL
 const TEST_USER_EMAIL = process.env.TEST_USER_EMAIL ?? "testuser@example.com";
 const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD ?? "testpassword";
 

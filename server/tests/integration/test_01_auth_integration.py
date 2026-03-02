@@ -1,6 +1,6 @@
 import pytest
-from server.db.models import AuthUser
-from server.main import app
+from db.models import AuthUser
+from main import app
 from db.database import db
 
 
@@ -70,7 +70,7 @@ def test_register_endpoint(client):
         },
     )
     print("Duplicate email:", response_dup.status_code, response_dup.json)
-    assert response_dup.status_code == 400
+    assert response_dup.status_code == 409
     assert "error" in response_dup.json
 
     # --- Failure: missing email ---
