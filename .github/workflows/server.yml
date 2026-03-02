@@ -45,8 +45,8 @@ jobs:
       - name: Run database migrations
         working-directory: server
         run: |
-          mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_001_create_base_schema.sql
-          mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_002_create_jwt_auth_migration.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot < db/migrations/20260206_001_create_base_schema.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot < db/migrations/20260206_002_create_jwt_auth_migration.sql
 
       - name: Validate server
         working-directory: server
