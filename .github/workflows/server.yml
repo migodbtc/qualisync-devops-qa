@@ -42,6 +42,12 @@ jobs:
       - name: Install Task runner
         run: sh -c "$(curl -ssL https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
+      - name: Run database migrations
+        working-directory: server
+        run: |
+          mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_001_create_base_schema.sql
+          mysql -h 127.0.0.1 -u root -proot < db/migrations/20260206_002_create_jwt_auth_migration.sql
+
       - name: Validate server
         working-directory: server
         env:
